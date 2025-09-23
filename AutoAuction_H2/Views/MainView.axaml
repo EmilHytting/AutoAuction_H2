@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:AutoAuction_H2.Views"
+             x:Class="AutoAuction_H2.Views.MainView"
+             Background="Transparent"
+			 Width="800"
+			 Height="450"
+			 >
+	
+
+	<Grid>
+		
+		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
+			   Stretch="UniformToFill"
+			   Opacity="0.3"
+			   IsHitTestVisible="False"
+			   Grid.RowSpan="2"
+			   Grid.ColumnSpan="2"
+			   Width="900"
+			   />
+		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="70"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="200"/>
+			<ColumnDefinition Width="500"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+		<!-- Top row -->
+
+		<views:LogoPanelView Grid.Row="0" Grid.Column="0"/>
+		<views:HeaderPanelView Grid.Row="0" Grid.Column="1"/>
+		<views:WindowButtonPanelView Grid.Row="0" Grid.Column="2"/>
+		<!-- Left column -->
+		<views:LeftPanelView Grid.Row="1" Grid.Column="0" Grid.RowSpan="1"/>
+		<!-- Main content area -->
+		<views:ContentPanelView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+		
+	</Grid>
+</UserControl>

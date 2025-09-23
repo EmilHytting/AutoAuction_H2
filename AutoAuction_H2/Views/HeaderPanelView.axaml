@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoAuction_H2.Views.HeaderPanelView"
+             Background="Transparent"
+			 Width="500"
+			 Height="70">
+
+	<Border Background="Transparent" CornerRadius="10" Margin="5">
+		<TextBlock Text="Header"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Foreground="White"
+                   FontSize="18"
+                   FontWeight="Bold"/>
+	</Border>
+</UserControl>

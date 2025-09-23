@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoAuction_H2.Views.LogoPanelView"
+             Background="Transparent"
+			 Width="200"
+			 Height="70">
+
+	<Border Background="Transparent" CornerRadius="10" Margin="5">
+		<StackPanel>
+			<TextBlock Text="LNE"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Foreground="White"
+                   FontWeight="Bold"
+					   FontSize="25"
+					   Padding="5"
+					   />
+			<TextBlock Text="Security"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Foreground="White"
+                   FontWeight="Bold"/>
+		</StackPanel>
+	</Border>
+</UserControl>
