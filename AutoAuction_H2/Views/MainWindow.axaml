@@ -11,7 +11,9 @@
         Background="Transparent">
 
 	<Border Background="Transparent" PointerPressed="Border_PointerPressed">
-			<views:MainView />
+			
+		<views:MainView />
 
 	</Border>
+	
 </Window>

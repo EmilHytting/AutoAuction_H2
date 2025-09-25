@@ -1,0 +1,25 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoAuction_H2.Views.ContentPanels.LoginView"
+             Width="500"
+             Height="500"
+             Background="Transparent">
+	<!-- important for hit testing -->
+
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+
+			<Label Content="Brugernavn" FontSize="16"/>
+			<TextBox x:Name="UsernameBox" Width="200"  FontSize="16" Watermark="Indtast brugernavn"/>
+
+			<Label Content="Password" FontSize="16"/>
+			<TextBox x:Name="PasswordBox" Width="200"  FontSize="16" Watermark="Indtast password"/>
+
+			<Button Content="Login" Width="200" Height="30"/>
+			<Button Content="Opret bruger" Width="200" Height="30" />
+
+		</StackPanel>
+
+	</Grid>
+</UserControl>

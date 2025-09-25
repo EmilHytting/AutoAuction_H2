@@ -1,5 +1,16 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AutoAuction_H2.App">
+             xmlns:local="clr-namespace:AutoAuction_H2"
+             xmlns:fluent="clr-namespace:Avalonia.Themes.Fluent;assembly=Avalonia.Themes.Fluent"
+             x:Class="AutoAuction_H2.App"
+             RequestedThemeVariant="Dark">
 
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <!-- Load Fluent Theme -->
+        <fluent:FluentTheme />
+    </Application.Styles>
 </Application>
