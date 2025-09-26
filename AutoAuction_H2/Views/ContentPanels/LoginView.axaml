@@ -1,25 +1,47 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             xmlns:local="clr-namespace:AutoAuction_H2.Views.ContentPanels"
              x:Class="AutoAuction_H2.Views.ContentPanels.LoginView"
-             Width="500"
-             Height="500"
-             Background="Transparent">
-	<!-- important for hit testing -->
+			 xmlns:views="clr-namespace:AutoAuction_H2.Views"
+             x:DataType="vm:LoginViewModel"
+             Width="800" Height="450" Background="Transparent">
 
-	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
 
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="True">
+
+		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
+			   Stretch="UniformToFill"
+			   Opacity="0.7"
+			   IsHitTestVisible="False"
+			   Grid.RowSpan="2"
+			   Grid.ColumnSpan="2"
+			   Width="900"
+			   />
+		<Grid.RowDefinitions>
+			<RowDefinition Height="40"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="100"/>
+		</Grid.ColumnDefinitions>
+		<views:WindowButtonPanelView Grid.Row="0" Grid.Column="1" Margin="0,15,0,0"/>
+
+		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Grid.ColumnSpan="2" Grid.RowSpan="2">
 			<Label Content="Brugernavn" FontSize="16"/>
-			<TextBox x:Name="UsernameBox" Width="200"  FontSize="16" Watermark="Indtast brugernavn"/>
+			<TextBox Text="{Binding Username}"  Width="200" FontSize="16" Watermark="Indtast brugernavn"/>
 
-			<Label Content="Password" FontSize="16"/>
-			<TextBox x:Name="PasswordBox" Width="200"  FontSize="16" Watermark="Indtast password"/>
+			<TextBox Text="{Binding Password}" Width="200" FontSize="16" Watermark="Indtast password"/>
 
-			<Button Content="Login" Width="200" Height="30"/>
-			<Button Content="Opret bruger" Width="200" Height="30" />
+			<StackPanel IsVisible="{Binding IsCreatingUser}">
+				<TextBox Text="{Binding ConfirmPassword}" Width="200" FontSize="16" Watermark="Gentag password"/>
+			</StackPanel>
 
+			<Button Content="Login" Command="{Binding LoginCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
+			<Button Content="Opret bruger" Command="{Binding ShowCreateUserCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
+			<Button Content="Bekræft oprettelse" Command="{Binding CreateUserCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser}"/>
 		</StackPanel>
-
 	</Grid>
 </UserControl>

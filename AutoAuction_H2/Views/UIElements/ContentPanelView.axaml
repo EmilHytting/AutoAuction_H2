@@ -8,7 +8,7 @@
 
 	<Border Background="Transparent" CornerRadius="10,0,0,0" BorderThickness="2,2,0,0" BorderBrush="Snow">
 		<ContentControl x:Name="RootContent">
-			<panels:LoginView />
+			<!--<panels:LoginView />-->
 		</ContentControl>
 	</Border>
 </UserControl>

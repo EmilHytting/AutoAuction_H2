@@ -1,13 +1,16 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-
-namespace AutoAuction_H2.Views.ContentPanels;
-
-public partial class LoginView : UserControl
+using Avalonia.Interactivity;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+namespace AutoAuction_H2.Views.ContentPanels
 {
-    public LoginView()
+    public partial class LoginView : UserControl
     {
-        InitializeComponent();
+        public LoginView()
+        {
+            InitializeComponent();
+        }
+
+       
     }
 }
