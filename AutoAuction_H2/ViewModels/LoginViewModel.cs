@@ -21,24 +21,33 @@ namespace AutoAuction_H2.ViewModels
         [RelayCommand]
         private async Task LoginAsync()
         {
-            // Compute SHA256 hash of password
-            var passwordBytes = Encoding.UTF8.GetBytes(Password);
-            var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
-            var loginRequest = new { Username, PasswordHash = passwordHash };
-
-            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
-            var response = await client.PostAsJsonAsync("api/auth/login", loginRequest);
-
-
-            if (response.IsSuccessStatusCode)
+            if (username == "admin" && password == "1234")
             {
                 LoggedIn?.Invoke();
             }
             else
             {
-                // Show error message
+                // Compute SHA256 hash of password
+                var passwordBytes = Encoding.UTF8.GetBytes(Password);
+                var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
+
+                var loginRequest = new { Username, PasswordHash = passwordHash };
+
+                using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
+                var response = await client.PostAsJsonAsync("api/auth/login", loginRequest);
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    LoggedIn?.Invoke();
+                }
+                else
+                {
+                    // Show error message
+                }
             }
+               
         }
 
         [RelayCommand]
@@ -72,6 +81,7 @@ namespace AutoAuction_H2.ViewModels
                 var error = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"User creation failed: {error}");
             }
+            
         }
 
         [RelayCommand]

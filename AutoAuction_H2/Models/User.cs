@@ -29,9 +29,8 @@ public abstract class User : IUser
     // Hash password with SHA256
     public static string HashPassword(string password)
     {
-        using var sha = SHA256.Create();
-        var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return System.Convert.ToBase64String(bytes);
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+        return Convert.ToBase64String(bytes);
     }
 
     // Validate username (min length and not empty)
