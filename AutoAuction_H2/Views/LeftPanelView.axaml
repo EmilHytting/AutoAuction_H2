@@ -21,6 +21,5 @@
 				<TextBlock Text="Menu Item 3" Margin="5"/>
 			</Border>
 		</StackPanel>
-
 	</Border>
 </UserControl>
