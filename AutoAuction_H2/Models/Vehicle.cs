@@ -77,6 +77,8 @@ namespace AutoAuction_H2.Models
             return $"ID: {ID}, Name: {Name} ({Year}), Fuel: {FuelType}, Km/l: {FuelEfficiency}, Energy: {GetEnergyClass()}, License: {LicenseType}, TowBar: {TowBar}";
         }
 
+
+     
     }
 
 

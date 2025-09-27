@@ -9,7 +9,7 @@
 
 
 
-	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="True">
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowGridLines="False">
 
 		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
 			   Stretch="UniformToFill"
@@ -30,18 +30,40 @@
 		<views:WindowButtonPanelView Grid.Row="0" Grid.Column="1" Margin="0,15,0,0"/>
 
 		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10" Grid.ColumnSpan="2" Grid.RowSpan="2">
+
 			<Label Content="Brugernavn" FontSize="16"/>
-			<TextBox Text="{Binding Username}"  Width="200" FontSize="16" Watermark="Indtast brugernavn"/>
+			<TextBox Text="{Binding Username}" Width="200" FontSize="16" Watermark="Indtast brugernavn"/>
 
+			<!-- Password -->
 			<TextBox Text="{Binding Password}" Width="200" FontSize="16" Watermark="Indtast password"/>
+			<TextBox Text="{Binding ConfirmPassword}" Width="200" FontSize="16" Watermark="Gentag password" IsVisible="{Binding IsCreatingUser}"/>
 
+			<!-- Conditional CPR / CVR -->
+			
+
+			<!-- Confirm password & role selection only shown when creating a new user -->
 			<StackPanel IsVisible="{Binding IsCreatingUser}">
-				<TextBox Text="{Binding ConfirmPassword}" Width="200" FontSize="16" Watermark="Gentag password"/>
+				<TextBox Text="{Binding CprNumber}" Width="200" FontSize="16" Watermark="Indtast CPR-nummer"
+					 IsVisible="{Binding IsPrivatUser}"/>
+				<TextBox Text="{Binding CvrNumber}" Width="200" FontSize="16" Watermark="Indtast CVR-nummer"
+						 IsVisible="{Binding IsPrivatUser, Converter={StaticResource InverseBooleanConverter}}"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+					<RadioButton Content="Privat" IsChecked="{Binding IsPrivatUser}"/>
+					<RadioButton Content="Virksomhed" IsChecked="{Binding !IsPrivatUser }" />
+				</StackPanel>
 			</StackPanel>
 
-			<Button Content="Login" Command="{Binding LoginCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
-			<Button Content="Opret bruger" Command="{Binding ShowCreateUserCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
-			<Button Content="Bekræft oprettelse" Command="{Binding CreateUserCommand}" Width="200" Height="30" IsVisible="{Binding IsCreatingUser}"/>
+			<!-- Buttons -->
+			<Button Content="Login" Command="{Binding LoginCommand}" Width="200" Height="30"
+					IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
+			<Button Content="Opret bruger" Command="{Binding ShowCreateUserCommand}" Width="200" Height="30"
+					IsVisible="{Binding IsCreatingUser, Converter={StaticResource InverseBooleanConverter}}"/>
+			<Button Content="Bekræft oprettelse" Command="{Binding CreateUserCommand}" Width="200" Height="30"
+					IsVisible="{Binding IsCreatingUser}"/>
+			<Button Content="Annuller oprettelse" Command="{Binding CancelCreateUserCommand}" Width="200" Height="30"
+					IsVisible="{Binding IsCreatingUser}"/>
+
 		</StackPanel>
+
 	</Grid>
 </UserControl>

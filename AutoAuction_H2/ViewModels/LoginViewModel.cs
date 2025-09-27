@@ -17,6 +17,9 @@ namespace AutoAuction_H2.ViewModels
         [ObservableProperty] private string password = "";
         [ObservableProperty] private string confirmPassword = "";
         [ObservableProperty] private bool isCreatingUser = false;
+        [ObservableProperty] private bool isPrivatUser = true;
+        [ObservableProperty] private string cvrNumber = "";
+        [ObservableProperty] private string cprNumber = "";
 
         [RelayCommand]
         private async Task LoginAsync()
@@ -88,7 +91,16 @@ namespace AutoAuction_H2.ViewModels
         private void ShowCreateUser()
         {
             IsCreatingUser = true;
-            ConfirmPassword = ""; // reset previous value
+            ConfirmPassword = "";
+        }
+
+        [RelayCommand]
+        private void CancelCreateUser()
+        {
+            IsCreatingUser = false;
+            Password = "";
+            ConfirmPassword = "";
+            Username = "";
         }
     }
 }
