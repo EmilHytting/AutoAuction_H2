@@ -1,4 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using AutoAuction_H2.Models;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Text.Json.Serialization.Metadata;
 
 namespace AutoAuction_H2.ViewModels
 {
@@ -20,5 +28,7 @@ namespace AutoAuction_H2.ViewModels
             // Switch to MainViewModel when login succeeds
             CurrentView = new MainViewModel();
         }
+
+        
     }
 }

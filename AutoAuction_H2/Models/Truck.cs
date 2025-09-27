@@ -1,6 +1,4 @@
-﻿namespace AutoAuction_H2.Models
-{
-    namespace AutoAuction_H2.Models
+﻿    namespace AutoAuction_H2.Models
     {
         public class Truck : HeavyVehicle
         {
@@ -26,4 +24,4 @@
 
         }
     }
-}
+
