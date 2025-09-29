@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
 using AutoAuction_H2.Views.ContentPanels;
 using AutoAuction_H2.ViewModels;
+using AutoAuction_H2.Views.Windows;
 
 namespace AutoAuction_H2.Views.UIElements;
 
@@ -16,6 +17,11 @@ public partial class UserProfileCard : UserControl
     {
         InitializeComponent();
         this.AttachedToVisualTree += OnAttachedToVisualTree;
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
     }
 
     private void OnAttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
@@ -37,6 +43,19 @@ public partial class UserProfileCard : UserControl
             loginVm.LoggedIn += mainWindow.ShowMainView;
             var loginView = new LoginView { DataContext = loginVm };
             mainWindow.MainContent.Content = loginView;
+        }
+    }
+
+    private async void OpenProfile_Click(object? sender, RoutedEventArgs e)
+    {
+        var win = new UserProfileWindow();
+        if (VisualRoot is Window owner)
+        {
+            await win.ShowDialog(owner);
+        }
+        else
+        {
+            win.Show();
         }
     }
 }

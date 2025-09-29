@@ -26,20 +26,17 @@ public abstract class User : IUser
         ZipCode = zipCode;
     }
 
-    // Hash password with SHA256
     public static string HashPassword(string password)
     {
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
         return Convert.ToBase64String(bytes);
     }
 
-    // Validate username (min length and not empty)
     public static bool ValidateUserName(string userName)
     {
         return !string.IsNullOrWhiteSpace(userName) && userName.Length >= 3;
     }
 
-    // Override ToString for better display
     public override string ToString()
     {
         return $"User: ID={ID}, UserName={UserName}, Saldo={Saldo}, ZipCode={ZipCode}";

@@ -1,27 +1,69 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:ui="clr-namespace:AutoAuction_H2.Views.UIElements"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
              x:Class="AutoAuction_H2.Views.LeftPanelView"
+             x:DataType="vm:MainViewModel"
 			 Width="200"
 			 Height="370">
 
+	<UserControl.Styles>
+		<Style Selector="Path.icon">
+			<Setter Property="Stretch" Value="Uniform"/>
+			<Setter Property="Width" Value="18"/>
+			<Setter Property="Height" Value="18"/>
+			<Setter Property="Fill" Value="White"/>
+		</Style>
+		<Style Selector="Path.icon-stroke">
+			<Setter Property="Stretch" Value="Uniform"/>
+			<Setter Property="Width" Value="18"/>
+			<Setter Property="Height" Value="18"/>
+			<Setter Property="Stroke" Value="White"/>
+			<Setter Property="StrokeThickness" Value="2"/>
+			<Setter Property="StrokeLineCap" Value="Round"/>
+		</Style>
+	</UserControl.Styles>
+
 	<Border Background="Transparent" CornerRadius="10">
-		<Grid RowDefinitions="290,*" ShowGridLines="True">
-			<StackPanel Grid.Row="0">
+		<Grid RowDefinitions="290,*">
+			<StackPanel Grid.Row="0" Spacing="4">
 				<!-- Menu Item 1 -->
 				<Border Background="Transparent" CornerRadius="0">
-					<Button Content="Hjem" Margin="5"/>
+					<Button Margin="5">
+						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+							<Path Classes="icon" Data="M10 2 L2 9 H5 V14 H9 V10 H11 V14 H15 V9 L10 2 Z"/>
+							<TextBlock Text="Hjem"/>
+						</StackPanel>
+					</Button>
 				</Border>
 				<!-- Menu Item 2 -->
 				<Border Background="Transparent" CornerRadius="0">
-					<Button Content="Vis Auktion" Margin="5"/>
+					<Button Margin="5" Command="{Binding ShowAuctionOverviewCommand}">
+						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+							<!-- List/Search icon -->
+							<Path Classes="icon-stroke" Data="M3,6 H13 M3,10 H13 M3,14 H9"/>
+							<TextBlock Text="Akuktionsliste"/>
+						</StackPanel>
+					</Button>
 				</Border>
 				<!-- Menu Item 3 -->
-				<!--<Border Background="Transparent" CornerRadius="0">
-					<Button Content="Opret Auktion" Margin="5"/>
-				</Border>-->
 				<Border Background="Transparent" CornerRadius="0">
-					<Button Content="Bud på Auktioner" Margin="5"/>
+					<Button Margin="5">
+						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+							<!-- Gavel icon (simplified) -->
+							<Path Classes="icon" Data="M2 12 L8 6 L10 8 L4 14 Z M10 4 L14 8 L12 10 L8 6 Z"/>
+							<TextBlock Text="Bud på Auktioner"/>
+						</StackPanel>
+					</Button>
+				</Border>
+				<Border Background="Transparent" CornerRadius="0">
+					<Button Margin="5">
+						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+							<!-- Plus icon -->
+							<Path Classes="icon-stroke" Stroke="{StaticResource AccentBrush}" Data="M9 3 V15 M3 9 H15"/>
+							<TextBlock Text="Sæt til salg"/>
+						</StackPanel>
+					</Button>
 				</Border>
 			</StackPanel>
 			<ui:UserProfileCard Grid.Row="1"/>
