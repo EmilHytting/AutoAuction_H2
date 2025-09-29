@@ -71,7 +71,7 @@ namespace AutoAuction_H2.Views
             var vehicles = JsonSerializer.Deserialize<List<Vehicle>>(response, options);
 
             return vehicles ?? new List<Vehicle>();
-            Debug.WriteLine()
+    
         }
 
 
