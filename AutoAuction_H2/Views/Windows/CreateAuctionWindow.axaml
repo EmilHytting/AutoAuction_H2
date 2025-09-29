@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:AutoAuction_H2.Views.Auction.Controls"
+        x:Class="AutoAuction_H2.Views.Windows.CreateAuctionWindow"
+        Width="900" Height="580"
+        Title="Sæt til salg"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        TransparencyLevelHint="AcrylicBlur,Transparent,Blur"
+        Background="Transparent"
+        CanResize="False">
+  <Border Padding="24" CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}">
+    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
+      <TextBlock Text="Sæt til salg" FontSize="22" FontWeight="Bold"/>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="20">
+        <controls:CreateAuctionBasicInfoCard/>
+        <controls:CreateAuctionVehicleDetailsCard Grid.Column="1"/>
+      </Grid>
+
+      <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+        <TextBlock Foreground="Tomato" Text="{Binding ErrorMessage}" VerticalAlignment="Center"/>
+        <Button Content="Annuller" Width="120" Click="Cancel_Click"/>
+        <Button Content="Opret auktion" Width="160" Classes="accent" Command="{Binding CreateCommand}"/>
+      </StackPanel>
+    </Grid>
+  </Border>
+</Window>

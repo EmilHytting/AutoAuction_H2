@@ -1,25 +1,35 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ui="clr-namespace:AutoAuction_H2.Views.UIElements"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
              x:Class="AutoAuction_H2.Views.LeftPanelView"
+             x:DataType="vm:MainViewModel"
 			 Width="200"
 			 Height="370">
 
 	<Border Background="Transparent" CornerRadius="10">
-		<StackPanel>
-			<!-- Menu Item 1 -->
-			<Border Background="Gray" CornerRadius="0" BorderBrush="Green" BorderThickness="0,0,0,2">
-				<TextBlock Text="Menu Item 1" Margin="5"/>
-			</Border>
-
-			<!-- Menu Item 2 -->
-			<Border Background="Gray" CornerRadius="0" BorderBrush="Green" BorderThickness="0,0,0,2">
-				<TextBlock Text="Menu Item 2" Margin="5"/>
-			</Border>
-
-			<!-- Menu Item 3 -->
-			<Border Background="Gray" CornerRadius="0" BorderBrush="Green" BorderThickness="0,0,0,2">
-				<TextBlock Text="Menu Item 3" Margin="5"/>
-			</Border>
-		</StackPanel>
+		<Grid RowDefinitions="290,*" ShowGridLines="True">
+			<StackPanel Grid.Row="0">
+				<!-- Menu Item 1 -->
+				<Border Background="Transparent" CornerRadius="0">
+					<Button Content="Hjem" Margin="5"/>
+				</Border>
+				<!-- Menu Item 2 -->
+				<Border Background="Transparent" CornerRadius="0">
+					<Button Content="Akuktionsliste" Margin="5" Command="{Binding ShowAuctionOverviewCommand}"/>
+				</Border>
+				<!-- Menu Item 3 -->
+				<!--<Border Background="Transparent" CornerRadius="0">
+					<Button Content="Opret Auktion" Margin="5"/>
+				</Border>-->
+				<Border Background="Transparent" CornerRadius="0">
+					<Button Content="Sæt til salg" Margin="5"/>
+				</Border>
+				<Border Background="Transparent" CornerRadius="0">
+					<Button Content="Auktionsoversigt" Margin="5"/>
+				</Border>
+			</StackPanel>
+			<ui:UserProfileCard Grid.Row="1"/>
+		</Grid>
 	</Border>
 </UserControl>

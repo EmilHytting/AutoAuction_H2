@@ -12,8 +12,20 @@ public class ViewLocator : IDataTemplate
         if (param is null)
             return null;
 
-        var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
+        var vmType = param.GetType();
+        var name = vmType.FullName!
+            .Replace(".ViewModels.", ".Views.", StringComparison.Ordinal)
+            .Replace("ViewModel", "View", StringComparison.Ordinal);
+
+        // Try resolve directly
         var type = Type.GetType(name);
+
+        // Also try the ContentPanels namespace if the first attempt fails
+        if (type is null)
+        {
+            var contentPanelsName = name.Replace(".Views.", ".Views.ContentPanels.", StringComparison.Ordinal);
+            type = Type.GetType(contentPanelsName);
+        }
 
         if (type != null)
         {

@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AutoAuction_H2"
              xmlns:converters="clr-namespace:AutoAuction_H2.Converters"
-			 xmlns:fluent="clr-namespace:Avalonia.Themes.Fluent;assembly=Avalonia.Themes.Fluent"
+             xmlns:fluent="clr-namespace:Avalonia.Themes.Fluent;assembly=Avalonia.Themes.Fluent"
              x:Class="AutoAuction_H2.App"
              RequestedThemeVariant="Dark">
 
@@ -10,12 +10,55 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
-	<Application.Resources>
-		<converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-	</Application.Resources>
+    <Application.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+
+        <!-- Shared brushes for app styling -->
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#202020C0"/>
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#2B2B2BE6"/>
+        <SolidColorBrush x:Key="ContrastBorderBrush" Color="Snow"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#00CFE6"/>
+    </Application.Resources>
 
     <Application.Styles>
         <!-- Load Fluent Theme -->
         <fluent:FluentTheme />
+
+        <!-- Global styles to align controls with windows look -->
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="#3A3A3A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Height" Value="36"/>
+        </Style>
+        <Style Selector="TextBox.search">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <!-- Use numeric entity for ø to avoid encoding issues -->
+            <Setter Property="Watermark" Value="S&#248;g auktioner..."/>
+            <Setter Property="Padding" Value="10,6"/>
+        </Style>
+        <Style Selector="TextBlock.bid">
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="DataGrid">
+            <Setter Property="BorderBrush" Value="#3A3A3A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#1E1E1E"/>
+            <Setter Property="RowBackground" Value="#242424"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#333"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#333"/>
+        </Style>
     </Application.Styles>
 </Application>
