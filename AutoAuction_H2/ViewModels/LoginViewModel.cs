@@ -25,12 +25,7 @@ namespace AutoAuction_H2.ViewModels
         private async Task LoginAsync()
         {
 
-            if (username == "admin" && password == "1234")
-            {
-                LoggedIn?.Invoke();
-            }
-            else
-            {
+
                 // Compute SHA256 hash of password
                 var passwordBytes = Encoding.UTF8.GetBytes(Password);
                 var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
@@ -49,7 +44,7 @@ namespace AutoAuction_H2.ViewModels
                 {
                     // Show error message
                 }
-            }
+       
                
         }
 

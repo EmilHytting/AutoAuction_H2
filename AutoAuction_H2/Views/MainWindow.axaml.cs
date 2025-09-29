@@ -4,7 +4,9 @@ using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views.ContentPanels;
 using Avalonia.Controls;
 using Avalonia.Input;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -69,7 +71,7 @@ namespace AutoAuction_H2.Views
             var vehicles = JsonSerializer.Deserialize<List<Vehicle>>(response, options);
 
             return vehicles ?? new List<Vehicle>();
-
+            Debug.WriteLine()
         }
 
 
