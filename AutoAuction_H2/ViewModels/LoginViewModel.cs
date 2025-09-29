@@ -5,12 +5,15 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AutoAuction_H2.ViewModels
 {
     public partial class LoginViewModel : ObservableObject
     {
+        public static string? CurrentUsername { get; private set; }
+        public static decimal CurrentBalance { get; private set; }
         public event Action? LoggedIn;
 
         [ObservableProperty] private string username = "";
@@ -24,28 +27,48 @@ namespace AutoAuction_H2.ViewModels
         [RelayCommand]
         private async Task LoginAsync()
         {
+            // Compute SHA256 hash of password
+            var passwordBytes = Encoding.UTF8.GetBytes(Password);
+            var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
+            var loginRequest = new { Username, PasswordHash = passwordHash };
 
-                // Compute SHA256 hash of password
-                var passwordBytes = Encoding.UTF8.GetBytes(Password);
-                var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
+            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
+            var response = await client.PostAsJsonAsync("api/auth/login", loginRequest);
 
-                var loginRequest = new { Username, PasswordHash = passwordHash };
+            if (response.IsSuccessStatusCode)
+            {
+                CurrentUsername = Username;
 
-                using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
-                var response = await client.PostAsJsonAsync("api/auth/login", loginRequest);
-
-
-                if (response.IsSuccessStatusCode)
+                // Hent saldo fra API (forventet JSON: { "balance": 1234.56 })
+                try
                 {
-                    LoggedIn?.Invoke();
+                    var balanceResponse = await client.GetAsync($"api/account/balance?username={Username}");
+                    if (balanceResponse.IsSuccessStatusCode)
+                    {
+                        var json = await balanceResponse.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(json);
+                        if (doc.RootElement.TryGetProperty("balance", out var balanceProp) && balanceProp.TryGetDecimal(out var balance))
+                            CurrentBalance = balance;
+                        else
+                            CurrentBalance = 0;
+                    }
+                    else
+                    {
+                        CurrentBalance = 0;
+                    }
                 }
-                else
+                catch
                 {
-                    // Show error message
+                    CurrentBalance = 0;
                 }
-       
-               
+
+                LoggedIn?.Invoke();
+            }
+            else
+            {
+                // Show error message
+            }
         }
 
         [RelayCommand]

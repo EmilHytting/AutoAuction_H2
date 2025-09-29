@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="90"
+             x:Class="AutoAuction_H2.Views.UIElements.UserProfileCard">
+	
+    <Border CornerRadius="12" Padding="24">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="12">
+            <StackPanel>
+                <TextBlock x:Name="UsernameText" FontWeight="Bold" FontSize="15"/>
+                <TextBlock x:Name="BalanceText"  Foreground="#9c9c9c" FontSize="15"/>
+            </StackPanel>
+            <Button Click="Logout_Click" Margin="45,0,0,0" Width="28" Height="30" ToolTip.Tip="Log ud" Background="Transparent" BorderBrush="Transparent">
+                <Path Fill="WhiteSmoke" Stretch="Uniform" Width="20" Height="20" Data="M3,3 L3,21 L13,21 L13,17 L11,17 L11,19 L5,19 L5,5 L11,5 L11,7 L13,7 L13,3 Z M17,12 L13,8 L13,11 L7,11 L7,13 L13,13 L13,16 Z"/>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>
