@@ -1,6 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:panels="clr-namespace:AutoAuction_H2.Views.ContentPanels"
+			 xmlns:views="clr-namespace:AutoAuction_H2.Views"
              x:Class="AutoAuction_H2.Views.ContentPanelView"
              Background="Transparent"
              Width="600"
@@ -8,7 +8,7 @@
 
 	<Border Background="Transparent" CornerRadius="10,0,0,0" BorderThickness="2,2,0,0" BorderBrush="Snow">
 		<ContentControl x:Name="RootContent">
-			<!--<panels:LoginView />-->
+			<views:HomeScreenView />
 		</ContentControl>
 	</Border>
 </UserControl>
