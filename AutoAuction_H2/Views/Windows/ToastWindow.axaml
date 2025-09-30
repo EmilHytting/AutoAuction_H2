@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AutoAuction_H2.Views.Windows.ToastWindow"
+        Width="260" Height="80"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        TransparencyLevelHint="AcrylicBlur,Transparent,Blur"
+        Background="Transparent"
+        CanResize="False"
+        Topmost="True">
+  <Border Padding="12" CornerRadius="10" Background="{StaticResource CardBackgroundBrush}">
+    <TextBlock x:Name="MessageText" Text="" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+  </Border>
+</Window>

@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AutoAuction_H2.Views.Auction.Controls.AuctionTable">
+  <Border CornerRadius="10" Padding="12" Background="{StaticResource CardBackgroundBrush}">
+    <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" HeadersVisibility="All" CanUserReorderColumns="False" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Navn" Binding="{Binding Name}"/>
+        <DataGridTextColumn Header="Årgang" Binding="{Binding Year}"/>
+        <DataGridTemplateColumn Header="Bud">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <TextBlock Classes="bid" Text="{Binding CurrentBid, StringFormat='{}{0:N0} kr.'}"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="Handling">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button Classes="accent" Content="Byd"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+      </DataGrid.Columns>
+    </DataGrid>
+  </Border>
+</UserControl>
