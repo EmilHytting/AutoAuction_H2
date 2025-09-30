@@ -25,6 +25,7 @@
         <!-- Load Fluent Theme -->
         <fluent:FluentTheme />
 
+
         <!-- Global styles to align controls with windows look -->
         <Style Selector="Button.accent">
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
@@ -45,7 +46,7 @@
             <Setter Property="CornerRadius" Value="6"/>
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
             <Setter Property="Foreground" Value="Black"/>
-            <!-- Use numeric entity for ø to avoid encoding issues -->
+            <!-- Use numeric entity for Ã¸ to avoid encoding issues -->
             <Setter Property="Watermark" Value="S&#248;g auktioner..."/>
             <Setter Property="Padding" Value="10,6"/>
         </Style>
