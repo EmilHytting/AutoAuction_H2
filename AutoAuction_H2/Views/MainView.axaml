@@ -8,12 +8,12 @@
 			 Height="450">
 	
 
-	<Grid ShowGridLines="True">
+	<Grid ShowGridLines="False">
 		
 		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
 			   Stretch="UniformToFill"
 			   Opacity="0.7"
-			   IsHitTestVisible="False"
+			   IsHitTestVisible="True"
 			   Grid.RowSpan="2"
 			   Grid.ColumnSpan="2"
 			   Width="900"
