@@ -14,8 +14,10 @@
 		<converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 	</Application.Resources>
 
+	
     <Application.Styles>
         <!-- Load Fluent Theme -->
         <fluent:FluentTheme />
+		
     </Application.Styles>
 </Application>
