@@ -18,13 +18,15 @@ public partial class MainViewModel : ViewModelBase
 
     public IRelayCommand ShowAuctionOverviewCommand { get; }
     public IRelayCommand ShowAuctionDetailCommand { get; }
+    public IRelayCommand ShowHomeCommand { get; }
 
     public MainViewModel()
     {
+        CurrentContent = new HomeScreenViewModel(); // this is correct
         ShowAuctionOverviewCommand = new RelayCommand(ShowAuctionOverview);
         ShowAuctionDetailCommand = new RelayCommand(ShowAuctionDetailSample);
-        // Set default content to home screen
-        CurrentContent = new HomeScreenViewModel();
+        ShowHomeCommand = new RelayCommand(ShowHomeScreen); ;
+
     }
 
     private void ShowAuctionOverview()
@@ -32,6 +34,10 @@ public partial class MainViewModel : ViewModelBase
         var vm = new AuctionOverviewViewModel();
         vm.RequestNavigate += Vm_RequestNavigate;
         CurrentContent = vm;
+    }
+    private void ShowHomeScreen()
+    {
+        CurrentContent = new HomeScreenViewModel();
     }
 
     private void Vm_RequestNavigate(object? sender, ViewModelBase e)

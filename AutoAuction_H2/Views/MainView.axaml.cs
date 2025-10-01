@@ -1,6 +1,7 @@
+using AutoAuction_H2.ViewModels;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia;
 
 namespace AutoAuction_H2.Views;
 

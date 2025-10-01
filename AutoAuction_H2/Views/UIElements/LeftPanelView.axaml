@@ -29,7 +29,7 @@
 			<StackPanel Grid.Row="0" Spacing="4">
 				<!-- Menu Item 1 -->
 				<Border Background="Transparent" CornerRadius="0">
-					<Button Margin="5">
+					<Button Margin="5" Command="{Binding ShowHomeCommand}">
 						<StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
 							<Path Classes="icon" Data="M10 2 L2 9 H5 V14 H9 V10 H11 V14 H15 V9 L10 2 Z"/>
 							<TextBlock Text="Hjem"/>

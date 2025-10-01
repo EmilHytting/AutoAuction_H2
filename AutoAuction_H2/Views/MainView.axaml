@@ -36,9 +36,9 @@
 		<views:HeaderPanelView Grid.Row="0" Grid.Column="1"/>
 		<views:WindowButtonPanelView Grid.Row="0" Grid.Column="2"/>
 		<!-- Left column -->
-		<views:LeftPanelView Grid.Row="1" Grid.Column="0" Grid.RowSpan="1"/>
-		<!-- Main content area -->
-		<views:ContentPanelView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-		
+		<views:LeftPanelView Grid.Row="1" Grid.Column="0" DataContext="{Binding}" />		<!-- Main content area -->
+		<views:ContentPanelView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+								DataContext="{Binding}" />
+
 	</Grid>
 </UserControl>

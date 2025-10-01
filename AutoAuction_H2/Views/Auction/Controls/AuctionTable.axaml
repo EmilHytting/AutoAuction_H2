@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="AutoAuction_H2.Views.Auction.Controls.AuctionTable">
+             x:Class="AutoAuction_H2.Views.Auction.Controls.AuctionTable"
+			 >
   <UserControl.Styles>
     <Style Selector="Button.success">
       <Setter Property="Background" Value="#4CAF50"/>
@@ -17,7 +18,7 @@
               DoubleTapped="OnGridDoubleTapped">
       <DataGrid.Columns>
         <DataGridTextColumn Header="Navn" Binding="{Binding Name}"/>
-        <DataGridTextColumn Header="Årgang" Binding="{Binding Year}"/>
+        <DataGridTextColumn Header="Ã…rgang" Binding="{Binding Year}"/>
         <DataGridTemplateColumn Header="Bud">
           <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
