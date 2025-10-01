@@ -10,7 +10,7 @@ namespace AutoAuction_H2.ViewModels
         public string Status { get; set; } = string.Empty;
     }
 
-    public class HomeScreenViewModel
+    public class HomeScreenViewModel : ViewModelBase
     {
         public ObservableCollection<AuctionMock> MockAuctions { get; } = new()
         {

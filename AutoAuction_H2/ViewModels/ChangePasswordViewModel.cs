@@ -27,6 +27,12 @@ public partial class ChangePasswordViewModel : ObservableObject
     {
         ErrorMessage = null;
 
+        if (string.IsNullOrWhiteSpace(LoginViewModel.CurrentUsername))
+        {
+            ErrorMessage = "Ingen bruger er logget ind.";
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(CurrentPassword) || string.IsNullOrWhiteSpace(NewPassword) || string.IsNullOrWhiteSpace(ConfirmPassword))
         {
             ErrorMessage = "Udfyld venligst alle felter.";
@@ -45,7 +51,7 @@ public partial class ChangePasswordViewModel : ObservableObject
 
         try
         {
-            // Hash passwords (SHA256)
+            // Hash passwords (SHA256) - server tilføjer efterfølgende sin egen salt og hasher igen
             static string Hash(string s)
             {
                 var bytes = Encoding.UTF8.GetBytes(s);
@@ -60,20 +66,21 @@ public partial class ChangePasswordViewModel : ObservableObject
             };
 
             using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
-            var response = await client.PostAsJsonAsync("api/auth/change-password", request);
+            var response = await client.PutAsJsonAsync("api/Auth/ChangePassword", request);
 
             if (!response.IsSuccessStatusCode)
             {
-                ErrorMessage = "Kunne ikke ændre adgangskode. Tjek nuværende adgangskode og prøv igen.";
+                var msg = await response.Content.ReadAsStringAsync();
+                ErrorMessage = string.IsNullOrWhiteSpace(msg) ? "Kunne ikke ændre adgangskode. Tjek nuværende adgangskode og prøv igen." : msg;
                 return;
             }
 
-            // Success: try close window via WeakReferenceMessenger or event
+            // Success: close via event
             PasswordChanged?.Invoke(this, EventArgs.Empty);
         }
-        catch
+        catch (Exception ex)
         {
-            ErrorMessage = "Der opstod en fejl. Prøv igen senere.";
+            ErrorMessage = $"Der opstod en fejl: {ex.Message}";
         }
     }
 

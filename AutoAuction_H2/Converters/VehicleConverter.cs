@@ -8,30 +8,74 @@ namespace AutoAuction_H2.Converters;
 
 public class VehicleConverter : JsonConverter<Vehicle>
 {
+    private static string? GetDiscriminator(JsonElement obj)
+    {
+        // Look for common discriminator names, case-insensitive
+        foreach (var prop in obj.EnumerateObject())
+        {
+            var name = prop.Name;
+            if (name.Equals("vehicleType", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("type", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("$type", StringComparison.OrdinalIgnoreCase))
+            {
+                return prop.Value.ValueKind == JsonValueKind.String ? prop.Value.GetString() : prop.Value.ToString();
+            }
+        }
+        return null;
+    }
+
+    private static string? InferTypeFromShape(JsonElement obj)
+    {
+        // Heuristics based on known properties
+        if (obj.TryGetProperty("Isofix", out _))
+            return nameof(PrivateCar);
+        if (obj.TryGetProperty("HasSafetyBar", out _) || obj.TryGetProperty("LoadCapacityKg", out _))
+            return nameof(ProfessionalCar);
+        if (obj.TryGetProperty("SeatCount", out _) || obj.TryGetProperty("SleepingCount", out _) || obj.TryGetProperty("Toilet", out _))
+            return nameof(Bus);
+        // If heavy-vehicle dimensions exist but not bus-specific fields, guess Truck
+        if (obj.TryGetProperty("Height", out _) && obj.TryGetProperty("Weight", out _) && obj.TryGetProperty("Length", out _))
+            return nameof(Truck);
+        return null;
+    }
+
     public override Vehicle? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        // Parse the current object as JsonDocument
         using var doc = JsonDocument.ParseValue(ref reader);
         var jsonObj = doc.RootElement;
 
-        // Get the type discriminator
-        if (!jsonObj.TryGetProperty("vehicleType", out var typeProp))
-            throw new JsonException("Missing vehicleType property");
+        // Try discriminator first
+        var typeStr = GetDiscriminator(jsonObj);
 
-        var typeStr = typeProp.GetString();
-
-        return typeStr switch
+        // Some backends might emit a schema placeholder like "string"; treat as unknown
+        if (string.IsNullOrWhiteSpace(typeStr) || string.Equals(typeStr, "string", StringComparison.OrdinalIgnoreCase))
         {
-            "PrivateCar" => jsonObj.Deserialize<PrivateCar>(options),
-            "ProfessionalCar" => jsonObj.Deserialize<ProfessionalCar>(options),
-            "Bus" => jsonObj.Deserialize<Bus>(options),
-            "Truck" => jsonObj.Deserialize<Truck>(options),
-            _ => throw new JsonException($"Unknown vehicleType: {typeStr}")
+            typeStr = InferTypeFromShape(jsonObj);
+        }
+
+        // Fallback if still unknown
+        typeStr ??= nameof(PrivateCar);
+
+        return typeStr.ToLowerInvariant() switch
+        {
+            "privatecar" => jsonObj.Deserialize<PrivateCar>(options),
+            "professionalcar" => jsonObj.Deserialize<ProfessionalCar>(options),
+            "bus" => jsonObj.Deserialize<Bus>(options),
+            "truck" => jsonObj.Deserialize<Truck>(options),
+            _ => jsonObj.Deserialize<PrivateCar>(options) // safe fallback
         };
     }
 
     public override void Write(Utf8JsonWriter writer, Vehicle value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, (object)value, value.GetType(), options);
+        // Write a discriminator to help consumers
+        using var doc = JsonDocument.Parse(JsonSerializer.Serialize(value, value.GetType(), options));
+        writer.WriteStartObject();
+        writer.WriteString("vehicleType", value.GetType().Name);
+        foreach (var prop in doc.RootElement.EnumerateObject())
+        {
+            prop.WriteTo(writer);
+        }
+        writer.WriteEndObject();
     }
 }

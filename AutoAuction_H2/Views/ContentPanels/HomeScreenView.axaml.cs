@@ -10,6 +10,7 @@ public partial class HomeScreenView : UserControl
     public HomeScreenView()
     {
         InitializeComponent();
-        DataContext = new HomeScreenViewModel();
+        // DataContext is provided via DataTemplates; remove hardcoded assignment
+        // DataContext = new HomeScreenViewModel();
     }
 }

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ac="clr-namespace:AutoAuction_H2.Views.Auction.Controls"
+             xmlns:av="clr-namespace:AutoAuction_H2.Views.Auction"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AutoAuction_H2.Views.ContentPanels.AuctionOverviewView">
   <Border CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}" Padding="12">
@@ -20,10 +21,14 @@
       <!-- Right side content -->
       <StackPanel Grid.Column="1" Spacing="12">
         <TextBlock Text="Aktuelle auktioner" FontSize="18" FontWeight="SemiBold"/>
-        <ac:AuctionTable/>
+        <ac:AuctionTable Items="{Binding CurrentAuctions}"
+                          ActionText="Make a bid"
+                          ActionCommand="{Binding OpenBuyerDetailCommand}"/>
 
         <TextBlock Text="Dine auktioner" FontSize="18" FontWeight="SemiBold" Margin="0,8,0,0"/>
-        <ac:AuctionTable/>
+        <ac:AuctionTable Items="{Binding YourAuctions}"
+                          ActionText="Open"
+                          ActionCommand="{Binding OpenSellerDetailCommand}"/>
       </StackPanel>
     </Grid>
   </Border>

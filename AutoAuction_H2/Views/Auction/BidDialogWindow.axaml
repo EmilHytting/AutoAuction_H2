@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AutoAuction_H2.Views.Auction.BidDialogWindow"
+        Width="420" Height="240"
+        Title="Afgiv bud"
+        SystemDecorations="None"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        TransparencyLevelHint="AcrylicBlur,Transparent,Blur"
+        Background="Transparent"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  
+  <Border Padding="16" CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}" PointerPressed="OnPointerPressed">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="14">
+      <!-- Title/Close -->
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+        <TextBlock Text="Afgiv bud" FontWeight="SemiBold" FontSize="16"/>
+        <Button Grid.Column="1" Content="✕" Width="28" Height="28" Click="Cancel_Click"/>
+      </Grid>
+
+      <!-- Input label -->
+      <TextBlock Grid.Row="1" Text="Dit bud"/>
+
+      <!-- Input + suffix -->
+      <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <NumericUpDown x:Name="BidInput"
+                       Minimum="0"
+                       Increment="500"
+                       FormatString="N0"
+                       HorizontalAlignment="Stretch"/>
+        <Border Grid.Column="1"
+                Padding="10,6"
+                Background="{StaticResource CardBackgroundBrush}"
+                CornerRadius="6">
+          <TextBlock Text="DKK" VerticalAlignment="Center"/>
+        </Border>
+      </Grid>
+
+      <!-- Actions -->
+      <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+        <Button Content="Annuller" Width="120" Classes="secondary" Click="Cancel_Click"/>
+        <Button Content="Byd" Width="120" Classes="accent" Click="Bid_Click"/>
+      </StackPanel>
+    </Grid>
+  </Border>
+</Window>
