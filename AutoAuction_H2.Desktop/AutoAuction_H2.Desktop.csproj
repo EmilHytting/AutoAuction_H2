@@ -24,8 +24,4 @@
   <ItemGroup>
     <ProjectReference Include="..\AutoAuction_H2\AutoAuction_H2.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
 </Project>
