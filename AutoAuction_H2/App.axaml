@@ -24,6 +24,8 @@
     <Application.Styles>
         <!-- Load Fluent Theme -->
         <fluent:FluentTheme />
+		<FluentTheme />
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
 
         <!-- Global styles to align controls with windows look -->

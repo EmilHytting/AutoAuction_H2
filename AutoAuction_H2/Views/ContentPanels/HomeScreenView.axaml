@@ -17,9 +17,8 @@
 
 		<DataGrid
             ItemsSource="{Binding MockAuctions}"
-            IsReadOnly="False"
+            IsReadOnly="True"
             GridLinesVisibility="All"
-            
             AutoGenerateColumns="True" />
 	</Grid>
 </UserControl>
