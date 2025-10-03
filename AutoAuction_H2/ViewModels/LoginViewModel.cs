@@ -80,18 +80,16 @@ namespace AutoAuction_H2.ViewModels
                 return;
             }
             string PasswordHash = Password;
-            // Hash the password (client-side)
             var passwordBytes = Encoding.UTF8.GetBytes(PasswordHash);
             var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
             var createUserRequest = new { Username, PasswordHash = clientHash };
-
             using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
             var response = await client.PostAsJsonAsync("api/auth/create", createUserRequest);
 
             if (response.IsSuccessStatusCode)
             {
-                // Reset form
+                // Reset formen
                 IsCreatingUser = false;
                 Password = "";
                 ConfirmPassword = "";
@@ -100,9 +98,8 @@ namespace AutoAuction_H2.ViewModels
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"User creation failed: {error}");
+                Console.WriteLine($"Bruger oprettelse fejlede: {error}");
             }
-            
         }
 
         [RelayCommand]

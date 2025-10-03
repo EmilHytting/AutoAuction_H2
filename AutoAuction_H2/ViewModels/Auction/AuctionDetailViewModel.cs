@@ -1,4 +1,5 @@
 using AutoAuction_H2.Models;
+using AutoAuction_H2.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -38,11 +39,18 @@ public partial class AuctionDetailViewModel : AutoAuction_H2.ViewModels.ViewMode
         ErrorMessage = null;
         if (amount <= Item.CurrentBid)
         {
-            ErrorMessage = "Bud skal være højere end nuværende bud.";
+            ErrorMessage = "Bid must be higher than current bid.";
             return;
         }
         try
         {
+            //DOMAIN RULES VALIDATION 
+            User buyer = GetCurrentUser();
+            if (buyer != null && !DomainRules.CanBuy(buyer, amount))
+            {
+                ErrorMessage = "Ingen tilstrækkelig saldo eller kredit.";
+                return;
+            }
             // TODO: call API to place bid
             await Task.Delay(200);
             Item = new AuctionItem { Id = Item.Id, Name = Item.Name, Year = Item.Year, CurrentBid = amount, ClosingDate = Item.ClosingDate };
@@ -67,5 +75,13 @@ public partial class AuctionDetailViewModel : AutoAuction_H2.ViewModels.ViewMode
         {
             ErrorMessage = ex.Message;
         }
+    }
+
+    // Tilføj en metode til at hente den aktuelle bruger
+    private User GetCurrentUser()
+    {
+        // TODO: Returner den aktuelle bruger fra systemet
+        // Fx via LoginViewModel eller en bruger-service
+        return null;
     }
 }
