@@ -1,29 +1,36 @@
-﻿using System;
-
-namespace AutoAuction_H2.Models
+﻿namespace AutoAuction_H2.Models
 {
-public class ProfessionalCar : Car
+    public class ProfessionalCar : Car
     {
-        public bool HasSafetyBar { get; set; }
+        public bool SafetyBar { get; private set; }
+        public double LoadCapacity { get; private set; }
 
-        public ProfessionalCar(string name, string regNumber, int year, double purchasePrice,
-                               double fuelEfficiency, FuelType fuelType, double motorSize,
-                               int seats, int loadCapacityKg, bool towBar = false, bool hasSafetyBar = false)
-            : base(name, regNumber, year, purchasePrice, fuelEfficiency, fuelType, motorSize)
+        internal ProfessionalCar(
+            string name,
+            string regNumber,
+            int year,
+            decimal purchasePrice,
+            double mileage,
+            bool towBar,
+            double motorSize,
+            double fuelEfficiency,
+            FuelType fuelType,
+            int seats,
+            TrunkDimensions trunk,
+            bool safetyBar,
+            double loadCapacity)
+            : base(name, regNumber, year, purchasePrice, mileage, towBar, motorSize, fuelEfficiency, fuelType, seats, trunk)
         {
-            NumberOfSeats = seats;
-            LoadCapacityKg = loadCapacityKg;
-            TowBar = towBar;
-            HasSafetyBar = hasSafetyBar;
+            SafetyBar = safetyBar;
+            LoadCapacity = loadCapacity;
+            LicenseType = (towBar || loadCapacity > 750) ? LicenseType.BE : LicenseType.B;
         }
 
-        public ProfessionalCar() { }
+        private ProfessionalCar() { }
 
         public override string ToString()
         {
-            return "Professional Car: " + base.ToString() + $", SafetyBar: {HasSafetyBar}";
+            return base.ToString() + $" | Erhvervsbil: Sikkerhedsbøjle = {(SafetyBar ? "Ja" : "Nej")}, Lasteevne: {LoadCapacity} kg";
         }
-
     }
 }
-

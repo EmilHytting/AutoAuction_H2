@@ -78,7 +78,7 @@ public partial class AuctionDetailViewModel : AutoAuction_H2.ViewModels.ViewMode
     }
 
     // Tilføj en metode til at hente den aktuelle bruger
-    private User GetCurrentUser()
+    private User? GetCurrentUser()
     {
         // TODO: Returner den aktuelle bruger fra systemet
         // Fx via LoginViewModel eller en bruger-service

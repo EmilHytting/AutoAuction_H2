@@ -1,37 +1,27 @@
-using AutoAuction_H2.Interfaces;
 using System;
 
-namespace AutoAuction_H2.Models;
-
-public class PrivateUser : User, ISeller, IBuyer
+namespace AutoAuction_H2.Models
 {
-    public string CPRnummer { get; set; } = string.Empty;
-
-    // Default constructor
-    public PrivateUser() { }
-
-    // Parameterized constructor for database or manual initialization
-    public PrivateUser(int id, string userName, string password, decimal saldo, int zipCode, string cprNummer)
-        : base(id, userName, password, saldo, zipCode)
+    public class PrivateUser : User
     {
-        CPRnummer = cprNummer;
-    }
+        public string CprNumber { get; private set; }
 
-    // Balance must not go below zero
-    public bool CanBuy(decimal pris)
-    {
-        return Saldo - pris >= 0;
-    }
+        public PrivateUser(string userName, string password, int zipCode, decimal initialBalance, string cprNumber)
+            : base(userName, password, zipCode, initialBalance, UserType.Private)
+        {
+            if (string.IsNullOrWhiteSpace(cprNumber))
+                throw new ArgumentException("CPR-nummer må ikke være tomt.");
+            if (cprNumber.Length != 10)
+                throw new ArgumentException("CPR-nummer skal bestå af 10 cifre.");
 
-    // Method to notify seller about a bid on a vehicle
-    public void GetNotificationAboutBid(object vehicle, decimal bid)
-    {
-        System.Console.WriteLine($"Bid on {vehicle}: {bid} kr.");
-    }
+            CprNumber = cprNumber;
+        }
 
-    // Override ToString for better display
-    public override string ToString()
-    {
-        return $"PrivateUser: ID={ID}, UserName={UserName}, Saldo={Saldo}, ZipCode={ZipCode}, CPRnummer={CPRnummer}";
+        private PrivateUser() { } // EF Core
+
+        public override string ToString()
+        {
+            return base.ToString() + $" | Privat bruger (CPR: {CprNumber})";
+        }
     }
 }

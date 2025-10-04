@@ -1,27 +1,39 @@
-﻿    namespace AutoAuction_H2.Models
+﻿using System;
+
+namespace AutoAuction_H2.Models
+{
+    public class Truck : HeavyVehicle
     {
-        public class Truck : HeavyVehicle
+        public double LoadCapacity { get; private set; }
+
+        internal Truck(
+            string name,
+            string regNumber,
+            int year,
+            decimal purchasePrice,
+            double mileage,
+            bool towBar,
+            double motorSize,
+            double fuelEfficiency,
+            FuelType fuelType,
+            double height,
+            double weight,
+            double length,
+            double loadCapacity)
+            : base(name, regNumber, year, purchasePrice, mileage, towBar, motorSize, fuelEfficiency, fuelType, height, weight, length)
         {
-            public double LoadCapacityKg { get; set; }
+            if (fuelType != FuelType.Diesel)
+                throw new ArgumentException("En lastbil kan kun køre på diesel.");
 
-            public Truck(string name, string regNumber, int year, double purchasePrice,
-                           double fuelEfficiency, FuelType fuelType, double motorSize,
-                           double height, double weight, double length,
-                           double loadCapacityKg, bool towBar = false)
-                : base(name, regNumber, year, purchasePrice, fuelEfficiency, fuelType, motorSize,
-                       height, weight, length, towBar)
-            {
-                LoadCapacityKg = loadCapacityKg;
-                LicenseType = towBar ? LicenseType.CE : LicenseType.C;
-            }
+            LoadCapacity = loadCapacity;
+            LicenseType = towBar ? LicenseType.CE : LicenseType.C;
+        }
 
-            public Truck() { }
+        private Truck() { }
 
-            public override string ToString()
-            {
-                return "Truck: " + base.ToString() + $", Load Capacity: {LoadCapacityKg} kg";
-            }
-
+        public override string ToString()
+        {
+            return base.ToString() + $" | Lastbil: Lasteevne {LoadCapacity} kg";
         }
     }
-
+}

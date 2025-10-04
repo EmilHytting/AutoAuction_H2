@@ -1,39 +1,44 @@
-using AutoAuction_H2.Interfaces;
 using System;
 
-namespace AutoAuction_H2.Models;
-
-public class CorporateUser : User, ISeller, IBuyer
+namespace AutoAuction_H2.Models
 {
-    public string CVRnummer { get; set; } = string.Empty;
-    public decimal Credit { get; set; }
-
-    // Default constructor
-    public CorporateUser() { }
-
-    // Parameterized constructor for database or manual initialization
-    public CorporateUser(int id, string userName, string password, decimal saldo, int zipCode, string cvrNummer, decimal credit)
-        : base(id, userName, password, saldo, zipCode)
+    public class CorporateUser : User
     {
-        CVRnummer = cvrNummer;
-        Credit = credit;
-    }
+        public string CvrNumber { get; private set; }
+        public decimal Credit { get; private set; }
 
-    // Balance can go below zero up to credit
-    public bool CanBuy(decimal pris)
-    {
-        return Saldo - pris >= -Credit;
-    }
+        public CorporateUser(string userName, string password, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
+            : base(userName, password, zipCode, initialBalance, UserType.Corporate)
+        {
+            if (string.IsNullOrWhiteSpace(cvrNumber))
+                throw new ArgumentException("CVR-nummer må ikke være tomt.");
+            if (cvrNumber.Length != 8)
+                throw new ArgumentException("CVR-nummer skal bestå af 8 cifre.");
+            if (credit < 0)
+                throw new ArgumentException("Kredit må ikke være negativ.");
 
-    // Method to notify seller about a bid on a vehicle
-    public void GetNotificationAboutBid(object vehicle, decimal bid)
-    {
-        System.Console.WriteLine($"Bid on {vehicle}: {bid} kr.");
-    }
+            CvrNumber = cvrNumber;
+            Credit = credit;
+        }
 
-    // Override ToString for better display
-    public override string ToString()
-    {
-        return $"CorporateUser: ID={ID}, UserName={UserName}, Saldo={Saldo}, ZipCode={ZipCode}, CVRnummer={CVRnummer}, Credit={Credit}";
+        private CorporateUser() { } // EF Core
+
+        // Overwrite balance rules: corporate can go into minus (up to credit)
+        public override bool Withdraw(decimal amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Beløbet skal være større end 0.");
+
+            if (Balance - amount < -Credit)
+                return false;
+
+            Balance -= amount;
+            return true;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + $" | Firma (CVR: {CvrNumber}, Kredit: {Credit} kr.)";
+        }
     }
 }

@@ -1,44 +1,76 @@
-using AutoAuction_H2.Interfaces;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
-using System;
 
-namespace AutoAuction_H2.Models;
-
-public abstract class User : IUser
+namespace AutoAuction_H2.Models
 {
-    public int ID { get; set; }
-    public string UserName { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
-    public decimal Saldo { get; set; }
-    public int ZipCode { get; set; }
-
-    // Default constructor
-    public User() { }
-
-    // Parameterized constructor
-    public User(int id, string userName, string password, decimal saldo, int zipCode)
+    public abstract class User : IUser
     {
-        ID = id;
-        UserName = userName;
-        PasswordHash = HashPassword(password);
-        Saldo = saldo;
-        ZipCode = zipCode;
-    }
+        public int Id { get; private set; }
+        public string UserName { get; private set; }
+        public string PasswordHash { get; private set; }
+        public decimal Balance { get; protected set; }
+        public int ZipCode { get; private set; }
+        public UserType UserType { get; private set; }
 
-    public static string HashPassword(string password)
-    {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-        return Convert.ToBase64String(bytes);
-    }
+        protected User(string userName, string password, int zipCode, decimal initialBalance, UserType userType)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentException("Brugernavn må ikke være tomt.");
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Adgangskode må ikke være tom.");
 
-    public static bool ValidateUserName(string userName)
-    {
-        return !string.IsNullOrWhiteSpace(userName) && userName.Length >= 3;
-    }
+            UserName = userName;
+            PasswordHash = HashPassword(password);
+            ZipCode = zipCode;
+            Balance = initialBalance;
+            UserType = userType;
+        }
 
-    public override string ToString()
-    {
-        return $"User: ID={ID}, UserName={UserName}, Saldo={Saldo}, ZipCode={ZipCode}";
+        protected User() { } // EF Core
+
+        // ---------- Password ----------
+        private static string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
+        public bool VerifyPassword(string password)
+        {
+            return PasswordHash == HashPassword(password);
+        }
+
+        // ---------- Balance ----------
+        public virtual bool Withdraw(decimal amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Beløbet skal være større end 0.");
+            if (Balance - amount < 0)
+                return false;
+
+            Balance -= amount;
+            return true;
+        }
+
+        public virtual void Deposit(decimal amount)
+        {
+            if (amount <= 0)
+                throw new ArgumentException("Beløbet skal være større end 0.");
+            Balance += amount;
+        }
+
+        // ---------- Notifications ----------
+        public virtual void NotifyAboutBid(Auction auction, decimal amount)
+        {
+            Console.WriteLine($"🔔 Notifikation til {UserName}: Der er afgivet et bud på {amount} kr. for {auction.Vehicle.Name}");
+        }
+
+        public override string ToString()
+        {
+            return $"{UserName} (Saldo: {Balance} kr., Postnr.: {ZipCode}, Type: {UserType})";
+        }
     }
 }

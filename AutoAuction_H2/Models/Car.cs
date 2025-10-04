@@ -1,63 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoAuction_H2.Models
 {
     public abstract class Car : Vehicle
     {
-        private int _numberOfSeats;
-        public int NumberOfSeats
-        {
-            get => _numberOfSeats;
-            protected set
-            {
-                if (value < 1)
-                    throw new ArgumentOutOfRangeException(nameof(NumberOfSeats), "Number of seats must be positive");
-                _numberOfSeats = value;
-            }
-        }
+        public int Seats { get; private set; }
+        public TrunkDimensions Trunk { get; private set; }
 
-        private int _trunkDimensions;
-        public int TrunkDimensions
+        protected Car(
+            string name,
+            string regNumber,
+            int year,
+            decimal purchasePrice,
+            double mileage,
+            bool towBar,
+            double motorSize,
+            double fuelEfficiency,
+            FuelType fuelType,
+            int seats,
+            TrunkDimensions trunk)
+            : base(name, regNumber, year, purchasePrice, mileage, towBar, motorSize, fuelEfficiency, fuelType)
         {
-            get => _trunkDimensions;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(TrunkDimensions), "Trunk volume cannot be negative");
-                _trunkDimensions = value;
-            }
-        }
+            if (motorSize < 0.7 || motorSize > 10.0)
+                throw new ArgumentOutOfRangeException(nameof(motorSize), "Motorstørrelsen for en personbil skal være mellem 0,7 og 10,0 liter.");
 
-        private int _loadCapacityKg;
-        public int LoadCapacityKg
-        {
-            get => _loadCapacityKg;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(LoadCapacityKg), "Load capacity must be non-negative");
-                _loadCapacityKg = value;
-            }
-        }
-
-        protected Car(string name, string regNumber, int year, double purchasePrice,
-                      double fuelEfficiency, FuelType fuelType, double motorSize)
-            : base(name, regNumber, year, purchasePrice, fuelEfficiency, fuelType, motorSize, LicenseType.B)
-        {
+            Seats = seats;
+            Trunk = trunk;
+            LicenseType = LicenseType.B;
         }
 
         protected Car() { }
 
-
-
-
         public override string ToString()
         {
-            return base.ToString() + $", Seats: {NumberOfSeats}, Trunk: {TrunkDimensions} L, Load: {LoadCapacityKg} kg";
+            return base.ToString() + $" | Personbil: {Seats} sæder, Bagagerum: {Trunk}";
         }
+    }
+
+    public record TrunkDimensions(double Length, double Width, double Height)
+    {
+        public override string ToString() => $"{Length}x{Width}x{Height} cm";
     }
 }

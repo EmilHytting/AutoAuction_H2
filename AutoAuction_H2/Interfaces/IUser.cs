@@ -1,10 +1,23 @@
-namespace AutoAuction_H2.Interfaces;
+using System;
 
-public interface IUser
+namespace AutoAuction_H2.Models
 {
-    int ID { get; set; }
-    string UserName { get; set; }
-    string PasswordHash { get; set; }
-    decimal Saldo { get; set; }
-    int ZipCode { get; set; }
+    public enum UserType
+    {
+        Private,
+        Corporate
+    }
+
+    public interface IUser
+    {
+        int Id { get; }
+        string UserName { get; }
+        decimal Balance { get; }
+        int ZipCode { get; }
+        UserType UserType { get; }
+
+        bool Withdraw(decimal amount);
+        void Deposit(decimal amount);
+        void NotifyAboutBid(Auction auction, decimal amount);
+    }
 }

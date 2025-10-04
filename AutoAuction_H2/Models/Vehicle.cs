@@ -1,86 +1,114 @@
 ﻿using System;
-
+using System.Text.RegularExpressions;
 
 namespace AutoAuction_H2.Models
 {
-
-
-    public enum FuelType { Benzin, Diesel }
+    public enum FuelType { Benzin, Diesel, Electric, Hydrogen }
+    public enum LicenseType { A, B, BE, C, CE, D, DE }
     public enum EnergyClass { A, B, C, D }
-    public enum LicenseType { B, BE, C, CE, D, DE }
 
     public abstract class Vehicle
     {
-        public int ID { get; private set; }
-        public string? Name { get; private set; }
-        public string? RegistrationNumber { get; private set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+
+        private string _registrationNumber = null!;
+        public string RegistrationNumber
+        {
+            get => MaskRegistration(_registrationNumber);   // returnerer altid maskeret
+            private set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Registreringsnummer må ikke være tomt.");
+
+                if (!Regex.IsMatch(value, @"^[A-Za-z]{2}\d{5}$"))
+                    throw new ArgumentException("Registreringsnummer skal bestå af to bogstaver og fem cifre.");
+
+                _registrationNumber = value;
+            }
+        }
+
         public int Year { get; private set; }
-        public double PurchasePrice { get; private set; }
-        public double Mileage { get; set; }
-        public bool TowBar { get; set; }
-        public LicenseType LicenseType { get; set; }
-        public double FuelEfficiency { get; set; }
+        public decimal PurchasePrice { get; private set; }
+        public double Mileage { get; private set; }
+        public bool TowBar { get; private set; }
+        public LicenseType LicenseType { get; protected set; }
         public double MotorSize { get; private set; }
+        public double FuelEfficiency { get; private set; }
         public FuelType FuelType { get; private set; }
 
-        protected Vehicle(string name, string registrationNumber, int year, double purchasePrice,
-                          double fuelEfficiency, FuelType fuelType, double motorSize,
-                          LicenseType licenseType, double mileage = 0, bool towBar = false)
+        public EnergyClass EnergyClass => GetEnergyClass();
+
+        // ---------- CONSTRUCTORS ----------
+        protected Vehicle(
+            string name,
+            string regNumber,
+            int year,
+            decimal purchasePrice,
+            double mileage,
+            bool towBar,
+            double motorSize,
+            double fuelEfficiency,
+            FuelType fuelType)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            RegistrationNumber = registrationNumber ?? throw new ArgumentNullException(nameof(registrationNumber));
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Navn må ikke være tomt.");
+            if (mileage < 0)
+                throw new ArgumentException("Kilometerstand må ikke være negativ.");
+            if (purchasePrice < 0)
+                purchasePrice = 0;
 
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(year, nameof(year));
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(purchasePrice, nameof(purchasePrice));
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(fuelEfficiency, nameof(fuelEfficiency));
-            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(motorSize, nameof(motorSize));
-
-
-
+            Name = name;
+            RegistrationNumber = regNumber;
             Year = year;
             PurchasePrice = purchasePrice;
-            FuelEfficiency = fuelEfficiency;
-            FuelType = fuelType;
-            MotorSize = motorSize;
-            LicenseType = licenseType;
             Mileage = mileage;
             TowBar = towBar;
+            MotorSize = motorSize;
+            FuelEfficiency = fuelEfficiency;
+            FuelType = fuelType;
         }
 
         protected Vehicle() { }
 
+        // ---------- METHODS ----------
         public EnergyClass GetEnergyClass()
         {
-            return FuelType switch
+            if (FuelType == FuelType.Electric || FuelType == FuelType.Hydrogen)
+                return EnergyClass.A;
+
+            if (Year < 2010)
             {
-                FuelType.Diesel => FuelEfficiency switch
-                {
-                    >= 20 => EnergyClass.A,
-                    >= 15 and < 20 => EnergyClass.B,
-                    < 15 => EnergyClass.C,
-                    _ => throw new ArgumentException("Invalid km/l value")
-                },
-                FuelType.Benzin => FuelEfficiency switch
-                {
-                    >= 20 => EnergyClass.A,
-                    >= 16 and < 20 => EnergyClass.B,
-                    >= 12 and < 16 => EnergyClass.C,
-                    < 12 => EnergyClass.D,
-                    _ => throw new ArgumentException("Invalid km/l value")
-                },
-                _ => throw new ArgumentException("Invalid fuel type")
-            };
+                return FuelType == FuelType.Diesel
+                    ? (FuelEfficiency >= 23 ? EnergyClass.A :
+                       FuelEfficiency >= 18 ? EnergyClass.B :
+                       FuelEfficiency >= 13 ? EnergyClass.C : EnergyClass.D)
+                    : (FuelEfficiency >= 18 ? EnergyClass.A :
+                       FuelEfficiency >= 14 ? EnergyClass.B :
+                       FuelEfficiency >= 10 ? EnergyClass.C : EnergyClass.D);
+            }
+            else
+            {
+                return FuelType == FuelType.Diesel
+                    ? (FuelEfficiency >= 25 ? EnergyClass.A :
+                       FuelEfficiency >= 20 ? EnergyClass.B :
+                       FuelEfficiency >= 15 ? EnergyClass.C : EnergyClass.D)
+                    : (FuelEfficiency >= 20 ? EnergyClass.A :
+                       FuelEfficiency >= 16 ? EnergyClass.B :
+                       FuelEfficiency >= 12 ? EnergyClass.C : EnergyClass.D);
+            }
+        }
+
+        private static string MaskRegistration(string regNr)
+        {
+            if (regNr.Length == 7)
+                return $"**{regNr.Substring(2, 3)}**";
+            return regNr;
         }
 
         public override string ToString()
         {
-            return $"ID: {ID}, Name: {Name} ({Year}), Fuel: {FuelType}, Km/l: {FuelEfficiency}, Energy: {GetEnergyClass()}, License: {LicenseType}, TowBar: {TowBar}";
+            return $"{Name} ({Year}) - Reg.nr.: {RegistrationNumber}, {Mileage} km, Brændstof: {FuelType}, Energiklasse: {EnergyClass}";
         }
-
-
-     
     }
-
-
-
 }

@@ -11,9 +11,9 @@ namespace AutoAuction_H2.Services
         public static bool CanBuy(User buyer, decimal price)
         {
             if (buyer is CorporateUser company)
-                return company.Saldo + company.Credit >= price;
+                return company.Balance + company.Credit >= price;
             if (buyer is PrivateUser privateUser)
-                return privateUser.Saldo >= price;
+                return privateUser.Balance >= price;
             return false;
         }
     }
