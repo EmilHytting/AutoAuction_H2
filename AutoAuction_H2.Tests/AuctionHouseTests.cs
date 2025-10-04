@@ -1,13 +1,25 @@
 ﻿using AutoAuction_H2.Models;
+using AutoAuction_H2.Services;
 using Xunit;
 
 namespace AutoAuction_H2.Tests
 {
     public class AuctionHouseTests
     {
-        private readonly AuctionHouse _house = new();
-        private readonly PrivateUser _seller = new("Seller", "pw", 9000, 100000, "1111111111");
-        private readonly PrivateUser _buyer = new("Buyer", "pw", 9100, 300000, "2222222222");
+        private readonly IUserService _userService;
+        private readonly AuctionHouse _house;
+        private readonly PrivateUser _seller;
+        private readonly PrivateUser _buyer;
+
+        public AuctionHouseTests()
+        {
+            _userService = new UserService();
+            _house = new AuctionHouse(_userService);
+
+            // Brugere SKAL oprettes via UserService
+            _seller = _userService.CreatePrivateUser("Seller", "pw", 9000, 100000, "1111111111");
+            _buyer = _userService.CreatePrivateUser("Buyer", "pw", 9100, 300000, "2222222222");
+        }
 
         [Fact]
         public void CanSetAuction_AndFindById()
@@ -15,7 +27,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreateTruckAuction(
                 _seller, "Volvo FH16", "TR12345", 2021, 800000, 30000,
                 true, 12, 3, FuelType.Diesel, 3.8, 15000, 18, 20000,
-                600000); // minPrice required
+                600000);
 
             int id = _house.SetForSale(auction.Vehicle, _seller, 600000);
             var found = _house.FindAuctionWithID(id);
