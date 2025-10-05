@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoAuction_H2.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using AutoAuction_H2.Services;
 using System;
 using System.Threading.Tasks;
+using Xunit.Sdk;
 
 namespace AutoAuction_H2.ViewModels;
 
@@ -29,7 +30,7 @@ public partial class ChangePasswordViewModel : ObservableObject
         ErrorMessage = null;
         SuccessMessage = null;
 
-        if (string.IsNullOrWhiteSpace(AppState.Instance.UserName))
+        if (AppState.Instance.UserId <= 0)
         {
             ErrorMessage = "Ingen bruger er logget ind.";
             return;
@@ -41,7 +42,10 @@ public partial class ChangePasswordViewModel : ObservableObject
             return;
         }
 
-        var (success, error) = await _authService.ChangePasswordAsync(AppState.Instance.UserName, CurrentPassword, NewPassword);
+        // ✅ Nu bruger vi userId i stedet for UserName
+        var (success, error) = await _authService.ChangePasswordAsync(
+            AppState.Instance.UserId,
+            NewPassword);
 
         if (!success)
         {
@@ -52,6 +56,7 @@ public partial class ChangePasswordViewModel : ObservableObject
         SuccessMessage = "✅ Adgangskoden blev ændret.";
         PasswordChanged?.Invoke(this, EventArgs.Empty);
     }
+
 
     public event EventHandler? PasswordChanged;
 }

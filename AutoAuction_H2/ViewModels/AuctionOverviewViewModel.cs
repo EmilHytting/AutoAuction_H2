@@ -48,14 +48,14 @@ namespace AutoAuction_H2.ViewModels
         private void OpenBuyer(AuctionEntity? auction)
         {
             if (auction is null) return;
-            var vm = new AutoAuction_H2.ViewModels.Auction.AuctionDetailViewModel(auction, isSeller: false);
+            var vm = new AutoAuction_H2.ViewModels.AuctionDetailViewModel(auction, isSeller: false);
             RequestNavigate?.Invoke(this, vm);
         }
 
         private void OpenSeller(AuctionEntity? auction)
         {
             if (auction is null) return;
-            var vm = new AutoAuction_H2.ViewModels.Auction.AuctionDetailViewModel(auction, isSeller: true);
+            var vm = new AutoAuction_H2.ViewModels.AuctionDetailViewModel(auction, isSeller: true);
             RequestNavigate?.Invoke(this, vm);
         }
     }

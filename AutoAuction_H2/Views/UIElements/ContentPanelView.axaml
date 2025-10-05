@@ -16,7 +16,7 @@
         <DataTemplate DataType="vm:AuctionOverviewViewModel">
             <cp:AuctionOverviewView />
         </DataTemplate>
-        <DataTemplate DataType="vm:Auction.AuctionDetailViewModel">
+        <DataTemplate DataType="vm:AuctionDetailViewModel">
             <av:AuctionDetailView />
         </DataTemplate>
     </UserControl.DataTemplates>

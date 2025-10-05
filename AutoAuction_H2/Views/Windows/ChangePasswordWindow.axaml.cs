@@ -2,6 +2,7 @@
 using Avalonia.Interactivity;
 using AutoAuction_H2.ViewModels;
 
+
 namespace AutoAuction_H2.Views.Windows;
 
 public partial class ChangePasswordWindow : Window

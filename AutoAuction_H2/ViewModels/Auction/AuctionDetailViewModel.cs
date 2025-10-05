@@ -6,7 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace AutoAuction_H2.ViewModels.Auction
+namespace AutoAuction_H2.ViewModels
 {
     public partial class AuctionDetailViewModel : ViewModelBase
     {
@@ -28,7 +28,7 @@ namespace AutoAuction_H2.ViewModels.Auction
         // ✅ Bruger AuctionEntity fra API’et
         public AuctionDetailViewModel(AuctionEntity item, bool isSeller)
         {
-            _auctionService = new AuctionService(AppState.Instance.ApiBaseUrl);
+            _auctionService = App.AuctionService;
             this.item = item;
             this.isSeller = isSeller;
 
@@ -48,13 +48,14 @@ namespace AutoAuction_H2.ViewModels.Auction
 
             try
             {
-                bool success = await _auctionService.PlaceBidAsync(Item.Id, AppState.Instance.UserId, amount);
+                var (success, error) = await _auctionService.PlaceBidAsync(Item.Id, AppState.Instance.UserId, amount);
 
                 if (!success)
                 {
-                    ErrorMessage = "Buddet blev afvist af serveren.";
+                    ErrorMessage = error ?? "Buddet blev afvist af serveren.";
                     return;
                 }
+
 
                 // Lokal UI-opdatering
                 Item.CurrentBid = amount;

@@ -16,6 +16,7 @@ public partial class App : Application
 {
     // ✅ Services til hele appen
     public static AuthService AuthService { get; private set; } = null!;
+    public static AuctionService AuctionService { get; private set; } = null!;
 
     public override void Initialize()
     {
@@ -25,8 +26,9 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         // Init services
-        var httpClient = new HttpClient { BaseAddress = new Uri(AppState.Instance.ApiBaseUrl) };
+        var httpClient = new HttpClient();
         AuthService = new AuthService(httpClient);
+        AuctionService = new AuctionService(httpClient);
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

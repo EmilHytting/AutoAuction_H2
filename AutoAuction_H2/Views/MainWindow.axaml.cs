@@ -34,7 +34,7 @@ namespace AutoAuction_H2.Views
             var mainView = new MainView();
 
             // ✅ Brug én fælles AuctionService baseret på AppState
-            var auctionService = new AuctionService(AppState.Instance.ApiBaseUrl);
+            var auctionService = App.AuctionService;
 
             // ✅ ViewModel får service injiceret
             var vm = new MainViewModel(auctionService);

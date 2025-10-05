@@ -1,8 +1,11 @@
 ﻿using AutoAuction_H2.Models.Entities;
 using AutoAuction_H2.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace AutoAuction_H2.ViewModels
 {
@@ -29,14 +32,22 @@ namespace AutoAuction_H2.ViewModels
         {
             var userId = AppState.Instance.UserId;
 
+            // Hent mine auktioner
             MyAuctions = new ObservableCollection<AuctionEntity>(
                 await _auctionService.GetMyAuctionsAsync(userId));
 
+            // Hent aktive bud
             ActiveBids = new ObservableCollection<AuctionEntity>(
                 await _auctionService.GetActiveBidsAsync(userId));
 
+            // Hent auktioner hvor jeg er overbudt
             OverbidAuctions = new ObservableCollection<AuctionEntity>(
                 await _auctionService.GetOverbidAuctionsAsync(userId));
+
+            // Hvis du vil have "alle auktioner":
+            var all = await _auctionService.GetAuctionsAsync();
         }
+
+
     }
 }

@@ -59,19 +59,22 @@ namespace AutoAuction_H2.API.Controllers
             if (user == null) return NotFound();
 
             user.UserName = request.UserName ?? user.UserName;
-            user.ZipCode = request.ZipCode;
-            user.Balance = request.Balance;
-            user.UserType = request.UserType;
-            user.CreditLimit = request.CreditLimit;
+            user.ZipCode = request.ZipCode != 0 ? request.ZipCode : user.ZipCode;
+            user.Balance = request.Balance != 0 ? request.Balance : user.Balance;
+            user.UserType = request.UserType != 0 ? request.UserType : user.UserType;
+            user.CreditLimit = request.CreditLimit != 0 ? request.CreditLimit : user.CreditLimit;
 
             if (!string.IsNullOrEmpty(request.Password))
             {
+                // ⚡ Password er allerede SHA256 fra klienten
+                // Her laver vi en ekstra SHA256 → dobbelthash
                 user.PasswordHash = UserEntity.DoubleHash(request.Password);
             }
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]

@@ -1,92 +1,101 @@
-﻿using AutoAuction_H2.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Json;
 
-namespace AutoAuction_H2.Services
+public class AuctionService
 {
-    public class AuctionService
+    private readonly HttpClient _client;
+
+    public AuctionService(HttpClient client)
     {
-        private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _options;
+        _client = client;
+    }
 
-        public AuctionService(string baseUrl)
-        {
-            _httpClient = new HttpClient { BaseAddress = new Uri(baseUrl) };
-            _options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-        }
+    // Hent alle auktioner
+    public async Task<IEnumerable<AuctionEntity>> GetAuctionsAsync()
+    {
+        var response = await _client.GetAsync("api/auctions");
+        if (!response.IsSuccessStatusCode)
+            return new List<AuctionEntity>();
 
-        public async Task<bool> PlaceBidAsync(int auctionId, int userId, decimal amount)
-        {
-            try
-            {
-                var bidRequest = new
-                {
-                    AuctionId = auctionId,
-                    UserId = userId,
-                    Amount = amount
-                };
+        return await response.Content.ReadFromJsonAsync<IEnumerable<AuctionEntity>>() ?? new List<AuctionEntity>();
+    }
 
-                // Brug det rigtige endpoint
-                var response = await _httpClient.PostAsJsonAsync($"api/Auctions/{auctionId}/bids", bidRequest);
+    // Hent specifik auktion
+    public async Task<AuctionEntity?> GetAuctionAsync(int id)
+    {
+        var response = await _client.GetAsync($"api/auctions/{id}");
+        if (!response.IsSuccessStatusCode)
+            return null;
 
-                if (response.IsSuccessStatusCode)
-                    return true;
+        return await response.Content.ReadFromJsonAsync<AuctionEntity>();
+    }
 
-                var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"⚠️ PlaceBidAsync fejl: {error}");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"⚠️ Exception i PlaceBidAsync: {ex.Message}");
-                return false;
-            }
-        }
+    // Opret auktion
+    public async Task<(bool success, string? error)> CreateAuctionAsync(AuctionEntity auction)
+    {
+        var response = await _client.PostAsJsonAsync("api/auctions", auction);
+        if (response.IsSuccessStatusCode)
+            return (true, null);
 
+        return (false, await response.Content.ReadAsStringAsync());
+    }
 
-        public async Task<List<AuctionEntity>> GetAuctionsAsync()
-        {
-            try
-            {
-                var response = await _httpClient.GetStringAsync("api/Auctions");
-                return JsonSerializer.Deserialize<List<AuctionEntity>>(response, _options) ?? new();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"⚠️ Error fetching auctions: {ex.Message}");
-                return new();
-            }
-        }
+    // Afgiv bud
+    public async Task<(bool success, string? error)> PlaceBidAsync(int auctionId, int userId, decimal amount)
+    {
+        var request = new { AuctionId = auctionId, UserId = userId, Amount = amount };
+        var response = await _client.PostAsJsonAsync("api/bids", request);
 
-        // 👇 NYE METODER 👇
+        if (response.IsSuccessStatusCode)
+            return (true, null);
 
-        public async Task<List<AuctionEntity>> GetMyAuctionsAsync(int userId)
-        {
-            var all = await GetAuctionsAsync();
-            return all.Where(a => a.SellerId == userId).ToList();
-        }
+        return (false, await response.Content.ReadAsStringAsync());
+    }
 
-        public async Task<List<AuctionEntity>> GetActiveBidsAsync(int userId)
-        {
-            var all = await GetAuctionsAsync();
-            return all.Where(a => a.HighestBidderId == userId).ToList();
-        }
+    // Luk auktion
+    public async Task<(bool success, string? error)> CloseAuctionAsync(int auctionId)
+    {
+        var response = await _client.PutAsync($"api/auctions/{auctionId}/close", null);
+        if (response.IsSuccessStatusCode)
+            return (true, null);
 
-        public async Task<List<AuctionEntity>> GetOverbidAuctionsAsync(int userId)
-        {
-            var all = await GetAuctionsAsync();
-            return all.Where(a =>
-                a.Bids.Any(b => b.UserId == userId) &&
-                a.HighestBidderId != userId &&
-                !a.IsSold).ToList();
-        }
+        return (false, await response.Content.ReadAsStringAsync());
+    }
+
+    // Slet auktion
+    public async Task<(bool success, string? error)> DeleteAuctionAsync(int auctionId)
+    {
+        var response = await _client.DeleteAsync($"api/auctions/{auctionId}");
+        if (response.IsSuccessStatusCode)
+            return (true, null);
+
+        return (false, await response.Content.ReadAsStringAsync());
+    }
+
+    // -------------------------------------------------
+    // Ekstra convenience-metoder til din HomeScreenView
+    // -------------------------------------------------
+    public async Task<IEnumerable<AuctionEntity>> GetMyAuctionsAsync(int userId)
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.SellerId == userId);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetActiveBidsAsync(int userId)
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a =>
+            a.Bids.Any(b => b.UserId == userId) &&
+            !a.IsSold &&
+            a.EndTime > DateTime.UtcNow);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetOverbidAuctionsAsync(int userId)
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a =>
+            a.Bids.Any(b => b.UserId == userId) &&
+            a.HighestBidderId != userId &&
+            !a.IsSold &&
+            a.EndTime > DateTime.UtcNow);
     }
 }

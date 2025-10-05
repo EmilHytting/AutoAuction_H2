@@ -1,5 +1,5 @@
 ﻿using AutoAuction_H2.Services;
-using AutoAuction_H2.ViewModels.Auction;
+using AutoAuction_H2.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -19,7 +19,7 @@ namespace AutoAuction_H2.ViewModels
         public MainViewModel()
         {
             // ✅ Opret én fælles AuctionService med baseUrl fra AppState
-            _auctionService = new AuctionService(AppState.Instance.ApiBaseUrl);
+            _auctionService = App.AuctionService;
 
             // ✅ Start på Home
             CurrentContent = new HomeScreenViewModel(_auctionService);

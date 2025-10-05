@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
-using AutoAuction_H2.Models.Interfaces;
+using System.Threading.Tasks;
 using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Models.Interfaces;
 
 namespace AutoAuction_H2.Services
 {
@@ -12,91 +11,80 @@ namespace AutoAuction_H2.Services
     {
         private readonly List<User> _users = new();
 
-        // ---------- Create ----------
-        public PrivateUser CreatePrivateUser(string userName, string password, int zipCode, decimal initialBalance, string cprNumber)
+        // ---------- CREATE ----------
+        public Task<PrivateUser> CreatePrivateUserAsync(string userName, string password, int zipCode, decimal initialBalance, string cprNumber)
         {
-            if (_users.Any(u => u.UserName == userName))
-                throw new ArgumentException($"Brugernavn '{userName}' er allerede taget.");
-
             var user = new PrivateUser(userName, password, zipCode, initialBalance, cprNumber);
             _users.Add(user);
-            return user;
+            return Task.FromResult(user);
         }
 
-        public CorporateUser CreateCorporateUser(string userName, string password, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
+        public Task<CorporateUser> CreateCorporateUserAsync(string userName, string password, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
         {
-            if (_users.Any(u => u.UserName == userName))
-                throw new ArgumentException($"Brugernavn '{userName}' er allerede taget.");
-
             var user = new CorporateUser(userName, password, zipCode, initialBalance, cvrNumber, credit);
             _users.Add(user);
-            return user;
+            return Task.FromResult(user);
         }
 
-        // ---------- Authentication ----------
-        public User? Authenticate(string userName, string password)
+        // ---------- AUTH ----------
+        public Task<User?> AuthenticateAsync(string userName, string password)
         {
             var user = _users.FirstOrDefault(u => u.UserName == userName);
-            return user != null && user.VerifyPassword(password) ? user : null;
+            if (user == null) return Task.FromResult<User?>(null);
+
+            return Task.FromResult(user.VerifyPassword(password) ? user : null);
         }
 
-        // ---------- Find ----------
-        public User? FindByUserName(string userName)
+        public Task<User?> FindByUserNameAsync(string userName)
         {
-            return _users.FirstOrDefault(u => u.UserName == userName);
+            var user = _users.FirstOrDefault(u => u.UserName == userName);
+            return Task.FromResult(user);
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return _users;
+            return Task.FromResult<IEnumerable<User>>(_users);
         }
 
-        // ---------- Update ----------
-        public bool UpdatePassword(string userName, string newPassword)
+        // ---------- UPDATE ----------
+        public Task<bool> UpdatePasswordAsync(string userName, string newPassword)
         {
-            var user = FindByUserName(userName);
-            if (user == null) return false;
+            var user = _users.FirstOrDefault(u => u.UserName == userName);
+            if (user == null) return Task.FromResult(false);
 
-            var type = user.GetType();
-            var passwordHashProp = typeof(User).GetProperty("PasswordHash", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            if (passwordHashProp == null) return false;
+            // hash på samme måde som User gør det
+            var hash = User.HashPasswordForService(newPassword);
+            user.GetType().GetProperty("PasswordHash")?.SetValue(user, hash);
 
-            var hashMethod = typeof(User).GetMethod("HashPassword", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-            if (hashMethod == null) return false;
-
-            string hashed = (string)hashMethod.Invoke(null, new object[] { newPassword })!;
-            passwordHashProp.SetValue(user, hashed);
-            return true;
+            return Task.FromResult(true);
         }
 
-        public bool UpdateZipCode(string userName, int newZipCode)
+        public Task<bool> UpdateZipCodeAsync(string userName, int newZipCode)
         {
-            var user = FindByUserName(userName);
-            if (user == null) return false;
+            var user = _users.FirstOrDefault(u => u.UserName == userName);
+            if (user == null) return Task.FromResult(false);
 
-            var zipProp = typeof(User).GetProperty("ZipCode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
-            if (zipProp == null) return false;
-
-            zipProp.SetValue(user, newZipCode);
-            return true;
+            user.GetType().GetProperty("ZipCode")?.SetValue(user, newZipCode);
+            return Task.FromResult(true);
         }
 
-        public bool UpdateBalance(string userName, decimal newBalance)
+        public Task<bool> UpdateBalanceAsync(string userName, decimal newBalance)
         {
-            var user = FindByUserName(userName);
-            if (user == null) return false;
+            var user = _users.FirstOrDefault(u => u.UserName == userName);
+            if (user == null) return Task.FromResult(false);
 
-            user.Deposit(newBalance - user.Balance);
-            return true;
+            user.GetType().GetProperty("Balance")?.SetValue(user, newBalance);
+            return Task.FromResult(true);
         }
 
-        // ---------- Delete ----------
-        public bool DeleteUser(string userName)
+        // ---------- DELETE ----------
+        public Task<bool> DeleteUserAsync(string userName)
         {
-            var user = FindByUserName(userName);
-            if (user == null) return false;
+            var user = _users.FirstOrDefault(u => u.UserName == userName);
+            if (user == null) return Task.FromResult(false);
 
-            return _users.Remove(user);
+            _users.Remove(user);
+            return Task.FromResult(true);
         }
     }
 }

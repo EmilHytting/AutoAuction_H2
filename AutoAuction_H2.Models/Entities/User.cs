@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using AutoAuction_H2.Models.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AutoAuction_H2.Models.Entities
 {
@@ -15,11 +16,9 @@ namespace AutoAuction_H2.Models.Entities
         public decimal Balance { get; protected set; }
         public int ZipCode { get; protected set; }
 
-        // Kræves af din arkitektur: afledte klasser bestemmer brugertype
         public abstract UserType UserType { get; }
 
-        // Reservation til bud
-        public decimal ReservedAmount { get; protected set; }  // <-- beskyttet setter, så subklasser kan ændre
+        public decimal ReservedAmount { get; protected set; }
         public decimal AvailableBalance => Balance - ReservedAmount;
 
         protected User(string userName, string password, int zipCode, decimal initialBalance)
@@ -36,19 +35,19 @@ namespace AutoAuction_H2.Models.Entities
             Balance = initialBalance;
         }
 
-        protected User() { } // EF Core
+        protected User() { } // til EF Core
 
-        // ---------- Password ----------
-        private static string HashPassword(string password)
+        // ✅ Gør den tilgængelig for UserService via 'protected internal'
+        protected internal static string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(password);
             var hash = sha256.ComputeHash(bytes);
             return Convert.ToBase64String(hash);
-
         }
 
-        public bool VerifyPassword(string password) => PasswordHash == HashPassword(password);
+        public bool VerifyPassword(string password) =>
+            PasswordHash == HashPassword(password);
 
         // ---------- Balance ----------
         public virtual bool Withdraw(decimal amount)
@@ -61,6 +60,15 @@ namespace AutoAuction_H2.Models.Entities
             Balance -= amount;
             return true;
         }
+        // Bruges af UserService til at opdatere adgangskode
+        public static string HashPasswordForService(string password)
+        {
+            using var sha256 = System.Security.Cryptography.SHA256.Create();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
+
 
         public virtual void Deposit(decimal amount)
         {
