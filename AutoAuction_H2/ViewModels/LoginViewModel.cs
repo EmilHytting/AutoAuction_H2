@@ -12,8 +12,7 @@ namespace AutoAuction_H2.ViewModels
 {
     public partial class LoginViewModel : ObservableObject
     {
-        public static string? CurrentUsername { get; private set; }
-        public static decimal CurrentBalance { get; private set; }
+        private const string ApiBaseUrl = "https://localhost:44334/";
         public event Action? LoggedIn;
 
         [ObservableProperty] private string username = "";
@@ -24,53 +23,65 @@ namespace AutoAuction_H2.ViewModels
         [ObservableProperty] private string cvrNumber = "";
         [ObservableProperty] private string cprNumber = "";
 
+        [ObservableProperty] private string errorMessage = "";
+        public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
+
+        partial void OnErrorMessageChanged(string value) =>
+            OnPropertyChanged(nameof(HasError));
+
         [RelayCommand]
         private async Task LoginAsync()
         {
-            LoggedIn?.Invoke();
+            var app = AppState.Instance;
+            app.UserId = 15;
+            app.UserName = "Admin1";
+            app.Balance = 5000;
+            app.UserType = 1;
+             LoggedIn?.Invoke();
             return;
-            // Compute SHA256 hash of password
-            var passwordBytes = Encoding.UTF8.GetBytes(Password);
-            var passwordHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
-            var loginRequest = new { Username, PasswordHash = passwordHash };
+            //try
+            //{
+            //    // Hash password på klienten
+            //    var passwordBytes = Encoding.UTF8.GetBytes(Password);
+            //    var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
-            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
-            var response = await client.PostAsJsonAsync("api/auth/login", loginRequest);
+            //    var loginRequest = new
+            //    {
+            //        UserName = Username,
+            //        Password = clientHash
+            //    };
 
-            if (response.IsSuccessStatusCode)
-            {
-                CurrentUsername = Username;
+            //    using var client = new HttpClient { BaseAddress = new Uri(ApiBaseUrl) };
+            //    var response = await client.PostAsJsonAsync("api/Auth/login", loginRequest);
 
-                // Hent saldo fra API (forventet JSON: { "balance": 1234.56 })
-                try
-                {
-                    var balanceResponse = await client.GetAsync($"api/account/balance?username={Username}");
-                    if (balanceResponse.IsSuccessStatusCode)
-                    {
-                        var json = await balanceResponse.Content.ReadAsStringAsync();
-                        using var doc = JsonDocument.Parse(json);
-                        if (doc.RootElement.TryGetProperty("balance", out var balanceProp) && balanceProp.TryGetDecimal(out var balance))
-                            CurrentBalance = balance;
-                        else
-                            CurrentBalance = 0;
-                    }
-                    else
-                    {
-                        CurrentBalance = 0;
-                    }
-                }
-                catch
-                {
-                    CurrentBalance = 0;
-                }
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        var json = await response.Content.ReadAsStringAsync();
+            //        using var doc = JsonDocument.Parse(json);
 
-                LoggedIn?.Invoke();
-            }
-            else
-            {
-                // Show error message
-            }
+            //        // Parse API response
+            //        var app = AppState.Instance;
+            //        app.UserId = doc.RootElement.GetProperty("userId").GetInt32();
+            //        app.Message = doc.RootElement.GetProperty("message").GetString() ?? "";
+            //        app.UserName = doc.RootElement.GetProperty("userName").GetString() ?? "";
+            //        app.Balance = doc.RootElement.GetProperty("balance").GetDecimal();
+            //        app.UserType = doc.RootElement.GetProperty("userType").GetInt32();
+            //        app.CreditLimit = doc.RootElement.GetProperty("CreditLimit").GetInt32();
+
+            //        ErrorMessage = "";
+            //        LoggedIn?.Invoke();
+            //    }
+            //    else
+            //    {
+            //        var error = await response.Content.ReadAsStringAsync();
+            //        ErrorMessage = $"❌ Login fejlede: {error}";
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    ErrorMessage = $"❌ Fejl under login: {ex.Message}";
+            //}
         }
 
         [RelayCommand]
@@ -78,35 +89,55 @@ namespace AutoAuction_H2.ViewModels
         {
             if (Password != ConfirmPassword)
             {
-                // Show some error message in your UI
+                ErrorMessage = "❌ Password og gentag password matcher ikke";
                 return;
             }
-            string PasswordHash = Password;
-            var passwordBytes = Encoding.UTF8.GetBytes(PasswordHash);
-            var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
 
-            var createUserRequest = new { Username, PasswordHash = clientHash };
-            using var client = new HttpClient { BaseAddress = new Uri("https://localhost:44372/") };
-            var response = await client.PostAsJsonAsync("api/auth/create", createUserRequest);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                // Reset formen
-                IsCreatingUser = false;
-                Password = "";
-                ConfirmPassword = "";
-                Username = "";
+                var passwordBytes = Encoding.UTF8.GetBytes(Password);
+                var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
+
+                var createUserRequest = new
+                {
+                    UserName = Username,
+                    Password = clientHash,
+                    Balance = 0m,
+                    UserType = IsPrivatUser ? 0 : 1,
+                    CreditLimit = IsPrivatUser ? 0m : 20000m
+                };
+
+                using var client = new HttpClient { BaseAddress = new Uri(ApiBaseUrl) };
+                var response = await client.PostAsJsonAsync("api/Users", createUserRequest);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    ErrorMessage = "";
+                    IsCreatingUser = false;
+
+                    // Ryd form
+                    Password = "";
+                    ConfirmPassword = "";
+                    Username = "";
+                    CprNumber = "";
+                    CvrNumber = "";
+                }
+                else
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    ErrorMessage = $"❌ Brugeroprettelse fejlede: {error}";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Bruger oprettelse fejlede: {error}");
+                ErrorMessage = $"❌ Fejl under oprettelse: {ex.Message}";
             }
         }
 
         [RelayCommand]
         private void ShowCreateUser()
         {
+            ErrorMessage = "";
             IsCreatingUser = true;
             ConfirmPassword = "";
         }
@@ -114,6 +145,7 @@ namespace AutoAuction_H2.ViewModels
         [RelayCommand]
         private void CancelCreateUser()
         {
+            ErrorMessage = "";
             IsCreatingUser = false;
             Password = "";
             ConfirmPassword = "";

@@ -4,21 +4,62 @@
              x:Class="AutoAuction_H2.Views.HomeScreenView"
              x:DataType="vm:HomeScreenViewModel">
 
-	<Grid Margin="5" ShowGridLines="True">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-		<StackPanel>
-			<TextBlock Text="Dine aktioner" FontSize="25" FontWeight="Bold" />
-			<TextBlock Text="{Binding MockAuctions.Count}" FontSize="25" FontWeight="Bold" />
+	<Grid Margin="10" RowDefinitions="Auto,*" RowSpacing="20">
+
+		<!-- Overskrift -->
+		<TextBlock Text="Oversigt" FontSize="16" FontWeight="Bold"/>
+
+		<StackPanel Grid.Row="1" Spacing="25">
+
+			<!-- Mine Auktioner -->
+			<StackPanel>
+				<TextBlock Text="Dine auktioner" FontSize="12" FontWeight="Bold"/>
+				<DataGrid ItemsSource="{Binding MyAuctions}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Height="150">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
+						<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
+						<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
+						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+
+			<!-- Aktive Bud -->
+			<StackPanel>
+				<TextBlock Text="Auktioner du har bud på" FontSize="12" FontWeight="Bold"/>
+				<DataGrid ItemsSource="{Binding ActiveBids}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Height="125">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
+						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
+						<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
+						<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
+						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+
+			<!-- Overbudte Auktioner -->
+			<StackPanel>
+				<TextBlock Text="Auktioner hvor du er overbudt" FontSize="12" FontWeight="Bold"/>
+				<DataGrid ItemsSource="{Binding OverbidAuctions}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Height="125">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
+						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
+						<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
+						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+
 		</StackPanel>
-
-
-		<DataGrid
-            ItemsSource="{Binding MockAuctions}"
-            IsReadOnly="True"
-            GridLinesVisibility="All"
-            AutoGenerateColumns="True" />
 	</Grid>
 </UserControl>

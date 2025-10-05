@@ -1,22 +1,42 @@
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AutoAuction_H2.ViewModels
 {
-    public class AuctionMock
+    public partial class HomeScreenViewModel : ViewModelBase
     {
-        public int AuctionId { get; set; }
-        public string VehicleName { get; set; } = string.Empty;
-        public double CurrentBid { get; set; }
-        public string Status { get; set; } = string.Empty;
-    }
+        private readonly AuctionService _auctionService;
 
-    public class HomeScreenViewModel : ViewModelBase
-    {
-        public ObservableCollection<AuctionMock> MockAuctions { get; } = new()
+        [ObservableProperty]
+        private ObservableCollection<AuctionEntity> myAuctions = new();
+
+        [ObservableProperty]
+        private ObservableCollection<AuctionEntity> activeBids = new();
+
+        [ObservableProperty]
+        private ObservableCollection<AuctionEntity> overbidAuctions = new();
+
+        public HomeScreenViewModel(AuctionService auctionService)
         {
-            new AuctionMock { AuctionId = 1, VehicleName = "VW Golf", CurrentBid = 120000, Status = "Active" },
-            new AuctionMock { AuctionId = 2, VehicleName = "Volvo Truck", CurrentBid = 350000, Status = "Ended" },
-            new AuctionMock { AuctionId = 3, VehicleName = "Ford Fiesta", CurrentBid = 90000, Status = "Active" }
-        };
+            _auctionService = auctionService;
+            _ = LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
+            var userId = AppState.Instance.UserId;
+
+            MyAuctions = new ObservableCollection<AuctionEntity>(
+                await _auctionService.GetMyAuctionsAsync(userId));
+
+            ActiveBids = new ObservableCollection<AuctionEntity>(
+                await _auctionService.GetActiveBidsAsync(userId));
+
+            OverbidAuctions = new ObservableCollection<AuctionEntity>(
+                await _auctionService.GetOverbidAuctionsAsync(userId));
+        }
     }
 }

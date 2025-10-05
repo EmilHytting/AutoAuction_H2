@@ -7,7 +7,7 @@
              x:Class="AutoAuction_H2.Views.ContentPanelView"
              Background="Transparent"
              Width="600"
-             Height="380">
+             >
 
     <UserControl.DataTemplates>
         <DataTemplate DataType="vm:HomeScreenViewModel">

@@ -1,5 +1,5 @@
-﻿using System;
-using AutoAuction_H2.Models.Interfaces;
+﻿using AutoAuction_H2.Models.Interfaces;
+using System;
 
 namespace AutoAuction_H2.Models.Entities
 {
@@ -12,10 +12,10 @@ namespace AutoAuction_H2.Models.Entities
         public decimal MinPrice { get; private set; }
         public decimal CurrentBid { get; private set; }
         public bool IsSold { get; private set; }
-        public DateTime EndTime { get; set; }   // gjort internal set, så AuctionHouse kan simulere udløb
+        public DateTime EndTime { get; internal set; }
 
         private static readonly TimeSpan DefaultDuration = TimeSpan.FromMinutes(1);
-
+      
         public Auction(Vehicle vehicle, IUser seller, decimal minPrice, TimeSpan? duration = null)
         {
             Vehicle = vehicle ?? throw new ArgumentNullException(nameof(vehicle));
@@ -34,12 +34,26 @@ namespace AutoAuction_H2.Models.Entities
             if (DateTime.UtcNow >= EndTime) return false;
             if (bidAmount <= CurrentBid) return false;
 
-            if (buyer is CorporateUser corp && corp.Balance + corp.Credit < bidAmount) return false;
-            if (buyer is PrivateUser priv && priv.Balance < bidAmount) return false;
+            // Hvis en anden var højeste byder → frigiv deres reservation
+            if (HighestBidder != null && HighestBidder != buyer)
+            {
+                HighestBidder.Release(CurrentBid);
+            }
+
+            // Hvis samme byder byder højere → frigiv gammel reservation
+            if (HighestBidder == buyer)
+            {
+                buyer.Release(CurrentBid);
+            }
+
+            // Prøv at reservere det nye beløb
+            if (!buyer.Reserve(bidAmount))
+                return false;
 
             CurrentBid = bidAmount;
             HighestBidder = buyer;
 
+            // Forlæng tid, hvis vi er tæt på udløb
             if (EndTime - DateTime.UtcNow <= TimeSpan.FromSeconds(30))
                 EndTime = DateTime.UtcNow.AddSeconds(30);
 
@@ -50,16 +64,18 @@ namespace AutoAuction_H2.Models.Entities
             return true;
         }
 
-
-
         // ---------- Close ----------
         public bool Close()
         {
+            if (IsSold) return false; // allerede lukket
             if (HighestBidder == null || CurrentBid < MinPrice)
             {
                 IsSold = false;
                 return false;
             }
+
+            // Frigiv reservation, før vi trækker endeligt
+            HighestBidder.Release(CurrentBid);
 
             if (!HighestBidder.Withdraw(CurrentBid))
             {
@@ -72,9 +88,7 @@ namespace AutoAuction_H2.Models.Entities
             return true;
         }
 
-
-
-        // ---------- Factory methods ----------
+        // ---------- Factory Methods ----------
         public static Auction CreatePrivateCarAuction(
             IUser seller, string name, string regNr, int year, decimal price, double mileage,
             bool towBar, double motorSize, double fuelEfficiency, FuelType fuelType,
@@ -86,6 +100,22 @@ namespace AutoAuction_H2.Models.Entities
                                      seats, trunkSize, isofix);
             return new Auction(car, seller, minPrice, duration ?? DefaultDuration);
         }
+
+        public static Auction CreateProfessionalCarAuction(
+            IUser seller, string name, string regNr, int year, decimal price, double mileage,
+            bool towBar, double motorSize, double fuelEfficiency, FuelType fuelType,
+            int seats, int trunkSize, bool safetyBar, double loadCapacity,
+            decimal minPrice, TimeSpan? duration = null)
+        {
+            var car = new ProfessionalCar(
+                name, regNr, year, price, mileage, towBar,
+                motorSize, fuelEfficiency, fuelType,
+                seats, trunkSize, safetyBar, loadCapacity
+            );
+
+            return new Auction(car, seller, minPrice, duration ?? DefaultDuration);
+        }
+
 
         public static Auction CreateTruckAuction(
             IUser seller, string name, string regNr, int year, decimal price, double mileage,
@@ -110,5 +140,6 @@ namespace AutoAuction_H2.Models.Entities
                               height, length, width, doors, seats, hasToilet);
             return new Auction(bus, seller, minPrice, duration ?? DefaultDuration);
         }
+
     }
 }

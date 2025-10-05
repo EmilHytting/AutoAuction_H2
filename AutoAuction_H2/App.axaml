@@ -11,7 +11,6 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
 
         <!-- Shared brushes for app styling -->
         <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#202020C0"/>

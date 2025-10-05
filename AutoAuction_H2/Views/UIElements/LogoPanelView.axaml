@@ -7,7 +7,7 @@
 
 	<Border Background="Transparent" CornerRadius="10" Margin="5">
 		<StackPanel>
-			<TextBlock Text="LNE"
+			<TextBlock Text="Pølle's"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    Foreground="White"
@@ -15,7 +15,7 @@
 					   FontSize="25"
 					   Padding="5"
 					   />
-			<TextBlock Text="Security"
+			<TextBlock Text="Brugtvogns aktion"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    Foreground="White"

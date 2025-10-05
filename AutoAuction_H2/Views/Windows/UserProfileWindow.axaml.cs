@@ -1,41 +1,41 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using AutoAuction_H2.ViewModels;
 
-namespace AutoAuction_H2.Views.Windows;
-
-public partial class UserProfileWindow : Window
+namespace AutoAuction_H2.Views.Windows
 {
-    public UserProfileWindow()
+    public partial class UserProfileWindow : Window
     {
-        InitializeComponent();
-
-        // Simple view model with current session data
-        DataContext = new UserProfileViewModel
+        public UserProfileWindow()
         {
-            Username = LoginViewModel.CurrentUsername ?? "Unknown",
-            Balance = LoginViewModel.CurrentBalance,
-            YourAuctionsCount = 2,
-            AuctionsWonCount = 1
-        };
-    }
+            InitializeComponent();
 
-    private void Close_Click(object? sender, RoutedEventArgs e) => Close();
-
-    private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
-    {
-        var dlg = new ChangePasswordWindow();
-
-        if (dlg.DataContext is ChangePasswordViewModel vm)
-        {
-            void Handler(object? s, System.EventArgs e)
-            {
-                vm.PasswordChanged -= Handler;
-                dlg.Close();
-            }
-            vm.PasswordChanged += Handler;
+            // ✅ Sæt DataContext direkte til en ny ViewModel, 
+            // som selv binder til AppState.Instance
+            DataContext = new UserProfileViewModel();
         }
 
-        await dlg.ShowDialog(this);
+        private void Close_Click(object? sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
+        {
+            var dlg = new ChangePasswordWindow();
+
+            if (dlg.DataContext is ChangePasswordViewModel vm)
+            {
+                void Handler(object? s, System.EventArgs e)
+                {
+                    vm.PasswordChanged -= Handler;
+                    dlg.Close();
+                }
+
+                vm.PasswordChanged += Handler;
+            }
+
+            await dlg.ShowDialog(this);
+        }
     }
 }

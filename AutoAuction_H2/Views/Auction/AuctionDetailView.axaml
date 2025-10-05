@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="AutoAuction_H2.Views.Auction.AuctionDetailView"
+			 Height="500"
+			 Width="500"
 			 >
 	
   <Border CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}" Padding="16">

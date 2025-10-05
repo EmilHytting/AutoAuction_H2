@@ -5,18 +5,19 @@
 			 x:Class="AutoAuction_H2.Views.MainView"
              Background="Transparent"
 			 Width="800"
-			 Height="450">
+			 Height="600">
 	
 
-	<Grid ShowGridLines="False">
+	<Grid ShowGridLines="True">
 		
 		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
 			   Stretch="UniformToFill"
-			   Opacity="0.7"
+			   Opacity="0.3"
 			   IsHitTestVisible="True"
 			   Grid.RowSpan="2"
 			   Grid.ColumnSpan="2"
 			   Width="900"
+			   Height="600"
 			   />
 		
 		<Grid.RowDefinitions>

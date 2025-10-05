@@ -8,7 +8,7 @@ namespace AutoAuction_H2.Models.Entities
         public string CvrNumber { get; private set; }
         public decimal Credit { get; private set; }
 
-        public override UserType UserType => UserType.Corporate;
+        public override UserType UserType => UserType.Corporate; // USER TYPE 1
 
         public CorporateUser(
             string userName,
@@ -38,7 +38,8 @@ namespace AutoAuction_H2.Models.Entities
             if (amount <= 0)
                 throw new ArgumentException("Beløbet skal være større end 0.");
 
-            if (Balance - amount < -Credit)
+            // tager højde for reserverede beløb
+            if ((Balance - ReservedAmount) - amount < -Credit)
                 return false;
 
             Balance -= amount;

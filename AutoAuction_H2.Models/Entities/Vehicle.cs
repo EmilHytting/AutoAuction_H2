@@ -38,9 +38,7 @@ namespace AutoAuction_H2.Models.Entities
         public double FuelEfficiency { get; private set; }
         public FuelType FuelType { get; private set; }
 
-        // 🔹 Tilføj denne property
-        public int TrunkSize { get; private set; }
-
+        
         public EnergyClass EnergyClass => GetEnergyClass();
 
         // ---------- CONSTRUCTORS ----------
@@ -114,7 +112,7 @@ namespace AutoAuction_H2.Models.Entities
         public override string ToString()
         {
             return $"{Name} ({Year}) - Reg.nr.: {RegistrationNumber}, {Mileage} km, Brændstof: {FuelType}, " +
-                   $"Energiklasse: {EnergyClass}, Bagagerum: {TrunkSize} L";
+                   $"Energiklasse: {EnergyClass}";
         }
     }
 }

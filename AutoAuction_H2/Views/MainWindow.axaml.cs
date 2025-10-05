@@ -1,83 +1,46 @@
-﻿using AutoAuction_H2.Converters;
-using AutoAuction_H2.Models.Entities;
+﻿using AutoAuction_H2.Services;
 using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views.ContentPanels;
 using Avalonia.Controls;
 using Avalonia.Input;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-
 
 namespace AutoAuction_H2.Views
 {
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
 
-            // Create LoginViewModel and LoginView
+
+
+            // Opret login view + viewmodel
             var loginVm = new LoginViewModel();
             loginVm.LoggedIn += ShowMainView;
 
-            var loginView = new LoginView();
-            loginView.DataContext = loginVm;
-
-            MainContent.Content = loginView; // Show login first
+            var loginView = new LoginView { DataContext = loginVm };
+            MainContent.Content = loginView;
         }
 
         private void Border_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-                this.BeginMoveDrag(e);
+                BeginMoveDrag(e);
         }
 
-        public async void ShowMainView()
+        public void ShowMainView()
         {
+            // Login er gennemført → vis hovedview
             var mainView = new MainView();
 
-            // 1️⃣ Create your ViewModel
-            var vm = new MainViewModel();
+            // ✅ Brug én fælles AuctionService baseret på AppState
+            var auctionService = new AuctionService(AppState.Instance.ApiBaseUrl);
 
-            // 2️⃣ Assign it to the view
+            // ✅ ViewModel får service injiceret
+            var vm = new MainViewModel(auctionService);
+
             mainView.DataContext = vm;
-
-            // 3️⃣ Load vehicles
-            var vehicles = await GetVehiclesAsync();
-            foreach (var v in vehicles)
-                vm.Vehicles.Add(v);
-
-            // 4️⃣ Show the view
             MainContent.Content = mainView;
         }
-
-
-        public async Task<List<Vehicle>> GetVehiclesAsync()
-        {
-            using var httpClient = new HttpClient();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters = { new VehicleConverter() } // <-- add the custom converter
-            };
-
-            var response = await httpClient.GetStringAsync("https://localhost:44372/api/Vehicles");
-            var vehicles = JsonSerializer.Deserialize<List<Vehicle>>(response, options);
-
-            return vehicles ?? new List<Vehicle>();
-    
-        }
-
-
-
-
     }
-
 }
-

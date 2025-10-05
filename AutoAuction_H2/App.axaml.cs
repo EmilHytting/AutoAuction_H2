@@ -1,16 +1,22 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
+using System;
 using System.Linq;
 using Avalonia.Markup.Xaml;
 using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views;
+using AutoAuction_H2.Services;
+using System.Net.Http;
 
 namespace AutoAuction_H2;
 
 public partial class App : Application
 {
+    // ✅ Services til hele appen
+    public static AuthService AuthService { get; private set; } = null!;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -18,6 +24,10 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Init services
+        var httpClient = new HttpClient { BaseAddress = new Uri(AppState.Instance.ApiBaseUrl) };
+        AuthService = new AuthService(httpClient);
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             DisableAvaloniaDataAnnotationValidation();
@@ -39,11 +49,9 @@ public partial class App : Application
 
     private void DisableAvaloniaDataAnnotationValidation()
     {
-        // Get an array of plugins to remove
         var dataValidationPluginsToRemove =
             BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
 
-        // remove each entry found
         foreach (var plugin in dataValidationPluginsToRemove)
         {
             BindingPlugins.DataValidators.Remove(plugin);

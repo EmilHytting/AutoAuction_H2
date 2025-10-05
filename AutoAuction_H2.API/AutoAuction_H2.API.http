@@ -1,4 +1,4 @@
-@AutoAuction_H2.API_HostAddress = http://localhost:5245
+@AutoAuction_H2.API_HostAddress = https://localhost:44334/swagger
 
 GET {{AutoAuction_H2.API_HostAddress}}/weatherforecast/
 Accept: application/json

@@ -5,7 +5,7 @@ namespace AutoAuction_H2.Models.Entities
     public class PrivateUser : User
     {
         public string CprNumber { get; private set; }
-        public override UserType UserType => UserType.Private;
+        public override UserType UserType => UserType.Private; // USER TYPE 0
 
         public PrivateUser(
             string userName,
