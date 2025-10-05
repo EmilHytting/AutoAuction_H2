@@ -1,5 +1,5 @@
 ﻿using AutoAuction_H2.Converters;
-using AutoAuction_H2.Models;
+using AutoAuction_H2.Models.Entities;
 using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views.ContentPanels;
 using Avalonia.Controls;

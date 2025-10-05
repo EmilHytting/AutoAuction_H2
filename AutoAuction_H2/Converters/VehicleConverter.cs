@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoAuction_H2.Models;
+using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.Converters;
 

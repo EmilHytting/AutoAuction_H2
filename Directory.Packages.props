@@ -1,5 +1,5 @@
 <Project>
-	<!-- https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management -->
+	<!-- https://learn.microsoft.com/nuget/consume-packages/central-package-management -->
 	<PropertyGroup>
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
@@ -19,6 +19,7 @@
 		<!-- Other core packages -->
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
+		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5" />
 
 		<!-- Test packages -->
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />

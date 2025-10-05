@@ -1,4 +1,4 @@
-using AutoAuction_H2.Models;
+using AutoAuction_H2.Models.Entities;
 using AutoAuction_H2.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

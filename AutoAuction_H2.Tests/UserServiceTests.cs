@@ -1,6 +1,7 @@
-﻿using AutoAuction_H2.Models;
+﻿
 using AutoAuction_H2.Services;
 using Xunit;
+using AutoAuction_H2.Models.Interfaces;
 
 namespace AutoAuction_H2.Tests
 {

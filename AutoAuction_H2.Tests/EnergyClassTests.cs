@@ -1,4 +1,4 @@
-﻿using AutoAuction_H2.Models;
+﻿using AutoAuction_H2.Models.Entities;
 using Xunit;
 
 namespace AutoAuction_H2.Tests
@@ -17,7 +17,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreatePrivateCarAuction(
                 _seller, "TestCar", "ZZ99999", year, 100000, 50000, false,
                 1.6, kmPerL, fuel, 5,
-                new TrunkDimensions(100, 80, 50), true, 50000);
+                320, true, 50000);
 
             Assert.Equal(expected, auction.Vehicle.GetEnergyClass());
         }

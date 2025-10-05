@@ -1,0 +1,6 @@
+@AutoAuction_H2.API_HostAddress = http://localhost:5245
+
+GET {{AutoAuction_H2.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

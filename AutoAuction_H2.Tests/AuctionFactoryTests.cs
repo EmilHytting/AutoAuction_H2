@@ -1,4 +1,4 @@
-﻿using AutoAuction_H2.Models;
+﻿using AutoAuction_H2.Models.Entities;
 using Xunit;
 
 namespace AutoAuction_H2.Tests
@@ -13,7 +13,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreatePrivateCarAuction(
                 _seller, "VW Polo", "AB12345", 2020, 120000, 25000, false,
                 1.2, 18, FuelType.Benzin, 5,
-                new TrunkDimensions(100, 80, 50), true, 100000);
+                320, true, 100000);
 
             Assert.IsType<PrivateCar>(auction.Vehicle);
             Assert.Equal("VW Polo", auction.Vehicle.Name);

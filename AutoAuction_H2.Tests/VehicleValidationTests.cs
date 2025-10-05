@@ -1,5 +1,6 @@
-﻿using AutoAuction_H2.Models;
+﻿using AutoAuction_H2.Models.Entities;
 using Xunit;
+using System;
 
 namespace AutoAuction_H2.Tests
 {
@@ -13,7 +14,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreatePrivateCarAuction(
                 _seller, "Mazda 3", "AB12345", 2020, 180000, 30000,
                 false, 2.0, 16, FuelType.Benzin, 5,
-                new TrunkDimensions(120, 80, 50), true, 120000);
+                320, true, 120000);
 
             Assert.Equal("**123**", auction.Vehicle.RegistrationNumber);
         }
@@ -25,7 +26,7 @@ namespace AutoAuction_H2.Tests
                 Auction.CreatePrivateCarAuction(
                     _seller, "Mazda 3", "AB12345", 2020, 180000, -30000,
                     false, 2.0, 16, FuelType.Benzin, 5,
-                    new TrunkDimensions(120, 80, 50), true, 120000));
+                    320, true, 120000));
         }
     }
 }

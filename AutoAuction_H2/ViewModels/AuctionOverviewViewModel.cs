@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoAuction_H2.ViewModels;
 using System.Collections.ObjectModel;
-using AutoAuction_H2.Models;
 using CommunityToolkit.Mvvm.Input;
+using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.ViewModels
 {

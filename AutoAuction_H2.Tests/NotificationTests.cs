@@ -1,4 +1,4 @@
-﻿using AutoAuction_H2.Models;
+﻿using AutoAuction_H2.Models.Entities;
 using Xunit;
 
 namespace AutoAuction_H2.Tests
@@ -27,7 +27,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreatePrivateCarAuction(
                 seller, "Audi A4", "AB12345", 2020, 250000, 30000,
                 false, 2.0, 18, FuelType.Benzin, 5,
-                new TrunkDimensions(100, 80, 50), true, 100000);
+                320, true, 100000);
 
             auction.PlaceBid(buyer, 120000);
 
@@ -43,7 +43,7 @@ namespace AutoAuction_H2.Tests
             var auction = Auction.CreatePrivateCarAuction(
                 seller, "Audi A4", "AB12345", 2020, 250000, 30000,
                 false, 2.0, 18, FuelType.Benzin, 5,
-                new TrunkDimensions(100, 80, 50), true, 100000);
+                320, true, 100000);
 
             auction.PlaceBid(buyer, 50000);
 

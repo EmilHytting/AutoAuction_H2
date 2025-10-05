@@ -1,4 +1,4 @@
-﻿using AutoAuction_H2.Models;
+﻿using AutoAuction_H2.Models.Entities;
 using Xunit;
 
 namespace AutoAuction_H2.Tests
