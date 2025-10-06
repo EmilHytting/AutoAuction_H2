@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using AutoAuction_H2.Services;
+using AutoAuction_H2.Views.UIElements;
 
 namespace AutoAuction_H2.ViewModels
 {
@@ -8,10 +9,14 @@ namespace AutoAuction_H2.ViewModels
         private readonly INavigationService _navigation;
         private readonly AuctionService _auctionService;
 
-        public MainViewModel(INavigationService navigation, AuctionService auctionService)
+        public UserProfileCard UserProfileCard { get; }
+        public LeftPanelViewModel LeftPanel { get; }
+
+        public MainViewModel(INavigationService navigation, AuctionService auctionService, UserProfileCard userProfileCard)
         {
             _navigation = navigation;
             _auctionService = auctionService;
+            UserProfileCard = userProfileCard;
 
             if (_navigation is INotifyPropertyChanged npc)
             {
@@ -28,7 +33,6 @@ namespace AutoAuction_H2.ViewModels
             _navigation.NavigateTo(new HomeScreenViewModel(_auctionService));
         }
 
-        public LeftPanelViewModel LeftPanel { get; }
         public ViewModelBase CurrentContent => _navigation.CurrentViewModel;
     }
 }

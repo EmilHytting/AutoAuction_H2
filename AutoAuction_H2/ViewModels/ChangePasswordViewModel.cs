@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Threading.Tasks;
 using Xunit.Sdk;
+using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.ViewModels;
 

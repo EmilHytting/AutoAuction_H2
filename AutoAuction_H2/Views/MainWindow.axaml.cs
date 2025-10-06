@@ -1,5 +1,5 @@
 ﻿using AutoAuction_H2.ViewModels;
-using Avalonia; // 👈 dette er vigtigt for Application.Current
+using AutoAuction_H2.Views.ContentPanels;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,19 +9,21 @@ namespace AutoAuction_H2.Views
     public partial class MainWindow : Window
     {
         private readonly MainViewModel _mainVm;
+        private readonly LoginViewModel _loginVm;
+        private readonly LoginView _loginView;
 
-        public MainWindow()
+        public MainWindow(MainViewModel mainVm, LoginViewModel loginVm, LoginView loginView)
         {
             InitializeComponent();
 
-            // Hent MainViewModel fra DI containeren
-            _mainVm = App.Services.GetRequiredService<MainViewModel>();
+            _mainVm = mainVm;
+            _loginVm = loginVm;
+            _loginView = loginView;
 
-            // Start med login-view
-            var loginVm = App.Services.GetRequiredService<LoginViewModel>();
-            loginVm.LoggedIn += ShowMainView;
+            _loginVm.LoggedIn += ShowMainView;
+            _loginView.DataContext = _loginVm;
 
-            MainContent.Content = new LoginView { DataContext = loginVm };
+            MainContent.Content = _loginView;
         }
 
         private void Border_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -32,11 +34,8 @@ namespace AutoAuction_H2.Views
 
         public void ShowMainView()
         {
-            var mainView = new MainView
-            {
-                DataContext = _mainVm
-            };
-
+            var mainView = App.Services.GetRequiredService<MainView>();
+            mainView.DataContext = _mainVm;
             MainContent.Content = mainView;
         }
     }

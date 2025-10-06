@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using AutoAuction_H2.Models.Entities;
 
 
 

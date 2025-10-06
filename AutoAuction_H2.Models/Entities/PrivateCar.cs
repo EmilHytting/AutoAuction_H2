@@ -2,10 +2,10 @@
 
 namespace AutoAuction_H2.Models.Entities
 {
-    public class PrivateCar : Vehicle
+
+    public class PrivateCar : Car
     {
-        public int Seats { get; private set; }
-        public bool Isofix { get; private set; }
+        public bool Isofix { get; init; }
 
         public PrivateCar(
             string name,
@@ -19,14 +19,13 @@ namespace AutoAuction_H2.Models.Entities
             FuelType fuelType,
             int seats,
             int trunkSizeLitres,
-            bool isofix
-        ) : base(name, regNumber, year, purchasePrice, mileage, towBar, motorSize, fuelEfficiency, fuelType)
+            bool hasIsofix
+        ) : base(name, regNumber, year, purchasePrice, mileage, towBar, motorSize, fuelEfficiency, fuelType, seats, trunkSizeLitres)
         {
             if (seats < 2 || seats > 7)
-                throw new ArgumentException("Privatbiler kan have mellem 2 og 7 sæder.");
+                throw new ArgumentException("En privatbil skal have mellem 2 og 7 sæder.");
 
-            Seats = seats;
-            Isofix = isofix;
+            Isofix = hasIsofix;
             LicenseType = LicenseType.B;
         }
 

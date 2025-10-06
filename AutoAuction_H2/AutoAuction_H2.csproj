@@ -9,6 +9,13 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <AvaloniaXaml Remove="Converters\**" />
+    <Compile Remove="Converters\**" />
+    <EmbeddedResource Remove="Converters\**" />
+    <None Remove="Converters\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" />
@@ -22,15 +29,11 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
   </ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\AutoAuction_H2.Models\AutoAuction_H2.Models.csproj" />
 		<ProjectReference Include="..\AutoAuction_H2.Services\AutoAuction_H2.Services.csproj" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
 </Project>

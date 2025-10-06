@@ -1,37 +1,34 @@
-﻿using Avalonia.Controls;
+﻿using AutoAuction_H2.ViewModels;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
-using AutoAuction_H2.ViewModels;
-using AutoAuction_H2.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoAuction_H2.Views.Windows
 {
     public partial class UserProfileWindow : Window
     {
-        private readonly AuthService _authService;
+        private readonly UserProfileViewModel _vm;
 
-        public UserProfileWindow(AuthService authService)
+        public UserProfileWindow(UserProfileViewModel vm)
         {
             InitializeComponent();
-            _authService = authService;
-
-            // ✅ ViewModel binder selv til AppState.Instance
-            DataContext = new UserProfileViewModel();
+            _vm = vm;
+            DataContext = _vm;
         }
 
         private void Close_Click(object? sender, RoutedEventArgs e) => Close();
 
         private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
         {
-            var dlg = new ChangePasswordWindow(_authService);
+            var dlg = App.Services.GetRequiredService<ChangePasswordWindow>();
 
             if (dlg.DataContext is ChangePasswordViewModel vm)
             {
-                void Handler(object? s, System.EventArgs e)
+                void Handler(object? s, System.EventArgs e2)
                 {
                     vm.PasswordChanged -= Handler;
                     dlg.Close();
                 }
-
                 vm.PasswordChanged += Handler;
             }
 

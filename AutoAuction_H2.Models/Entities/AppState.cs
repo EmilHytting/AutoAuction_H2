@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace AutoAuction_H2
+namespace AutoAuction_H2.Models.Entities
 {
     public class AppState : INotifyPropertyChanged
     {

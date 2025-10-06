@@ -1,6 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ui="clr-namespace:AutoAuction_H2.Views.UIElements"
              xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
              x:Class="AutoAuction_H2.Views.LeftPanelView"
              x:DataType="vm:MainViewModel"
@@ -91,7 +90,6 @@
 			</StackPanel>
 
 			<!-- Profil nederst -->
-			<ui:UserProfileCard Grid.Row="1" Margin="5"/>
-		</Grid>
+			<ContentPresenter Grid.Row="1" Content="{Binding UserProfileCard}" />		</Grid>
 	</Border>
 </UserControl>
