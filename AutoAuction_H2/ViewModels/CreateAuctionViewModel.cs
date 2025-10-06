@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutoAuction_H2.ViewModels;
 
-public partial class CreateAuctionViewModel : ObservableObject
+public partial class CreateAuctionViewModel : ViewModelBase
 {
     [ObservableProperty] private string name = string.Empty;
     [ObservableProperty] private int? mileage;

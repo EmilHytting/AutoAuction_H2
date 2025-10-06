@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             x:Class="AutoAuction_H2.Views.ContentPanels.MySalesView"
+             x:DataType="vm:MySalesViewModel">
+
+	<DockPanel Margin="10">
+		<TextBlock Text="💼 Mine salg"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="0,0,0,10"
+                   DockPanel.Dock="Top"/>
+
+		<DataGrid ItemsSource="{Binding Sales}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All">
+
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Auction Id" Binding="{Binding Id}" Width="80"/>
+				<DataGridTextColumn Header="Startpris" Binding="{Binding MinPrice}" Width="100"/>
+				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" Width="120"/>
+				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
+				<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
+</UserControl>

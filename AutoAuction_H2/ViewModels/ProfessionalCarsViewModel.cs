@@ -3,15 +3,14 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
 
-
 namespace AutoAuction_H2.ViewModels
 {
-    public class TrucksViewModel : ViewModelBase
+    public class ProfessionalCarsViewModel : ViewModelBase
     {
         private readonly AuctionService _auctionService;
-        public ObservableCollection<AuctionEntity> Trucks { get; } = new();
+        public ObservableCollection<AuctionEntity> Cars { get; } = new();
 
-        public TrucksViewModel(AuctionService auctionService)
+        public ProfessionalCarsViewModel(AuctionService auctionService)
         {
             _auctionService = auctionService;
             _ = LoadAsync();
@@ -20,9 +19,9 @@ namespace AutoAuction_H2.ViewModels
         private async Task LoadAsync()
         {
             var auctions = await _auctionService.GetAuctionsAsync();
-            Trucks.Clear();
-            foreach (var a in auctions.Where(a => a.Vehicle is Truck))
-                Trucks.Add(a);
+            Cars.Clear();
+            foreach (var a in auctions.Where(a => a.Vehicle is ProfessionalCar))
+                Cars.Add(a);
         }
     }
 }

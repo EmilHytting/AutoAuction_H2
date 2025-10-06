@@ -1,20 +1,35 @@
-﻿using AutoAuction_H2.ViewModels;
+﻿using AutoAuction_H2.Services;
+using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views.ContentPanels;
 using AutoAuction_H2.Views.Windows;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoAuction_H2.Views.UIElements
 {
     public partial class UserProfileCard : UserControl
     {
+        private readonly AuthService _authService;
         private readonly UserProfileViewModel _vm;
+        private readonly UserProfileWindow _profileWindow;
+        private readonly LoginView _loginView;
+        private readonly LoginViewModel _loginVm;
 
-        public UserProfileCard(UserProfileViewModel vm)
+        public UserProfileCard(
+            AuthService authService,
+            UserProfileViewModel vm,
+            UserProfileWindow profileWindow,
+            LoginView loginView,
+            LoginViewModel loginVm)
         {
             InitializeComponent();
+
+            _authService = authService;
             _vm = vm;
+            _profileWindow = profileWindow;
+            _loginView = loginView;
+            _loginVm = loginVm;
+
             DataContext = _vm;
         }
 
@@ -22,20 +37,19 @@ namespace AutoAuction_H2.Views.UIElements
         {
             if (VisualRoot is Window window && window is MainWindow mainWindow)
             {
-                var loginVm = App.Services.GetRequiredService<LoginViewModel>();
-                loginVm.LoggedIn += mainWindow.ShowMainView;
+                _loginVm.LoggedIn += mainWindow.ShowMainView;
+                _loginView.DataContext = _loginVm;
 
-                mainWindow.MainContent.Content = new LoginView { DataContext = loginVm };
+                mainWindow.MainContent.Content = _loginView;
             }
         }
 
         private async void OpenProfile_Click(object? sender, RoutedEventArgs e)
         {
-            var win = App.Services.GetRequiredService<UserProfileWindow>();
             if (VisualRoot is Window owner)
-                await win.ShowDialog(owner);
+                await _profileWindow.ShowDialog(owner);
             else
-                win.Show();
+                _profileWindow.Show();
         }
     }
 }

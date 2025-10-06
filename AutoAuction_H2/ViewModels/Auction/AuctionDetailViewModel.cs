@@ -25,11 +25,11 @@ namespace AutoAuction_H2.ViewModels
 
         public event EventHandler? Closed;
 
-        // ✅ Vi modtager AuctionService via constructor injection
+        // ✅ AuctionService injiceres via DI
         public AuctionDetailViewModel(AuctionEntity item, bool isSeller, AuctionService auctionService)
         {
-            _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService));
-            this.item = item ?? throw new ArgumentNullException(nameof(item));
+            _auctionService = auctionService;
+            this.item = item;
             this.isSeller = isSeller;
 
             BackCommand = new RelayCommand(() => Closed?.Invoke(this, EventArgs.Empty));

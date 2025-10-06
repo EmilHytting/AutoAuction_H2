@@ -41,12 +41,12 @@ public class AuthService
     }
 
     // Change password
+  
     public async Task<(bool success, string? error)> ChangePasswordAsync(int userId, string newPassword)
     {
-        // ⚡ Hash én gang på klienten
         var request = new { Password = Hash(newPassword) };
 
-        var response = await _client.PutAsJsonAsync($"api/users/{userId}", request);
+        var response = await _client.PutAsJsonAsync($"api/users/{userId}/password", request);
 
         if (response.IsSuccessStatusCode)
             return (true, null);
@@ -54,6 +54,7 @@ public class AuthService
         var msg = await response.Content.ReadAsStringAsync();
         return (false, string.IsNullOrWhiteSpace(msg) ? "Kunne ikke ændre adgangskode" : msg);
     }
+
 
 
 

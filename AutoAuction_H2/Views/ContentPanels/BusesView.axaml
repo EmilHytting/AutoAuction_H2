@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             x:Class="AutoAuction_H2.Views.ContentPanels.BusesView"
+             x:DataType="vm:BusesViewModel">
+
+	<DockPanel Margin="10">
+		<TextBlock Text="🚌 Busser"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Margin="0,0,0,10"
+                   DockPanel.Dock="Top"/>
+
+		<DataGrid ItemsSource="{Binding Buses}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All">
+
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Auction Id" Binding="{Binding Id}" Width="80"/>
+				<DataGridTextColumn Header="Startpris" Binding="{Binding MinPrice}" Width="100"/>
+				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" Width="120"/>
+				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
+
+				<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
+				<DataGridTextColumn Header="Årgang" Binding="{Binding Vehicle.Year}" Width="80"/>
+				<DataGridTextColumn Header="Km" Binding="{Binding Vehicle.Mileage}" Width="120"/>
+				<DataGridTextColumn Header="Brændstof" Binding="{Binding Vehicle.FuelType}" Width="100"/>
+			</DataGrid.Columns>
+		</DataGrid>
+	</DockPanel>
+</UserControl>

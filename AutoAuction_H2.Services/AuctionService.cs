@@ -10,7 +10,7 @@ public class AuctionService
         _client = client;
     }
 
-    // Hent alle auktioner
+    // ---------- Basis ----------
     public async Task<IEnumerable<AuctionEntity>> GetAuctionsAsync()
     {
         var response = await _client.GetAsync("api/auctions");
@@ -20,7 +20,6 @@ public class AuctionService
         return await response.Content.ReadFromJsonAsync<IEnumerable<AuctionEntity>>() ?? new List<AuctionEntity>();
     }
 
-    // Hent specifik auktion
     public async Task<AuctionEntity?> GetAuctionAsync(int id)
     {
         var response = await _client.GetAsync($"api/auctions/{id}");
@@ -30,7 +29,6 @@ public class AuctionService
         return await response.Content.ReadFromJsonAsync<AuctionEntity>();
     }
 
-    // Opret auktion
     public async Task<(bool success, string? error)> CreateAuctionAsync(AuctionEntity auction)
     {
         var response = await _client.PostAsJsonAsync("api/auctions", auction);
@@ -40,7 +38,6 @@ public class AuctionService
         return (false, await response.Content.ReadAsStringAsync());
     }
 
-    // Afgiv bud
     public async Task<(bool success, string? error)> PlaceBidAsync(int auctionId, int userId, decimal amount)
     {
         var request = new { AuctionId = auctionId, UserId = userId, Amount = amount };
@@ -52,7 +49,6 @@ public class AuctionService
         return (false, await response.Content.ReadAsStringAsync());
     }
 
-    // Luk auktion
     public async Task<(bool success, string? error)> CloseAuctionAsync(int auctionId)
     {
         var response = await _client.PutAsync($"api/auctions/{auctionId}/close", null);
@@ -62,7 +58,6 @@ public class AuctionService
         return (false, await response.Content.ReadAsStringAsync());
     }
 
-    // Slet auktion
     public async Task<(bool success, string? error)> DeleteAuctionAsync(int auctionId)
     {
         var response = await _client.DeleteAsync($"api/auctions/{auctionId}");
@@ -71,10 +66,6 @@ public class AuctionService
 
         return (false, await response.Content.ReadAsStringAsync());
     }
-
-    // -------------------------------------------------
-    // Ekstra convenience-metoder til din HomeScreenView
-    // -------------------------------------------------
     public async Task<IEnumerable<AuctionEntity>> GetMyAuctionsAsync(int userId)
     {
         var all = await GetAuctionsAsync();
@@ -98,5 +89,42 @@ public class AuctionService
             a.HighestBidderId != userId &&
             !a.IsSold &&
             a.EndTime > DateTime.UtcNow);
+    }
+
+    // ---------- Ekstra filters til Views ----------
+    public async Task<IEnumerable<AuctionEntity>> GetPrivateCarsAsync()
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.Vehicle is PrivateCar);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetProfessionalCarsAsync()
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.Vehicle is ProfessionalCar);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetTrucksAsync()
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.Vehicle is Truck);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetBusesAsync()
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.Vehicle is Bus);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetMySalesAsync(int userId)
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.SellerId == userId);
+    }
+
+    public async Task<IEnumerable<AuctionEntity>> GetMyBidsAsync(int userId)
+    {
+        var all = await GetAuctionsAsync();
+        return all.Where(a => a.Bids.Any(b => b.UserId == userId));
     }
 }

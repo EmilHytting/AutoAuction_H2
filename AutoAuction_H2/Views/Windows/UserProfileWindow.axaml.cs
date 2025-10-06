@@ -9,10 +9,12 @@ namespace AutoAuction_H2.Views.Windows
     {
         private readonly UserProfileViewModel _vm;
 
-        public UserProfileWindow(UserProfileViewModel vm)
+        public UserProfileWindow()
         {
             InitializeComponent();
-            _vm = vm;
+
+            // ✅ Hent ViewModel fra DI
+            _vm = App.Services.GetRequiredService<UserProfileViewModel>();
             DataContext = _vm;
         }
 
@@ -20,6 +22,7 @@ namespace AutoAuction_H2.Views.Windows
 
         private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
         {
+            // ✅ Resolve ChangePasswordWindow fra DI
             var dlg = App.Services.GetRequiredService<ChangePasswordWindow>();
 
             if (dlg.DataContext is ChangePasswordViewModel vm)

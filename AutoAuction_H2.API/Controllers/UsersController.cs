@@ -50,6 +50,24 @@ namespace AutoAuction_H2.API.Controllers
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
+        
+        // Changes the password.
+              [HttpPut("{id}/password")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordRequest request)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            user.PasswordHash = UserEntity.DoubleHash(request.Password);
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        public class ChangePasswordRequest
+        {
+            public string Password { get; set; } = null!;
+        }
 
         // PUT: api/users/5
         [HttpPut("{id}")]

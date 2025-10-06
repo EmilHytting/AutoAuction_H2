@@ -5,7 +5,7 @@ using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.ViewModels
 {
-    public partial class UserProfileViewModel : ObservableObject
+    public partial class UserProfileViewModel : ViewModelBase
     {
         [ObservableProperty] private string userName;
         [ObservableProperty] private decimal balance;

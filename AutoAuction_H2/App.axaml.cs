@@ -1,4 +1,5 @@
-﻿using AutoAuction_H2.Services;
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Services;
 using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views;
 using AutoAuction_H2.Views.ContentPanels;
@@ -24,8 +25,13 @@ namespace AutoAuction_H2
         {
             var services = new ServiceCollection();
 
-            // Registrer services
-            services.AddSingleton<HttpClient>();
+            // Hent base-URL fra AppState
+            var baseUri = new Uri(AppState.Instance.ApiBaseUrl);
+
+            // Registrer HttpClient med base address
+            services.AddSingleton(new HttpClient { BaseAddress = baseUri });
+
+            // Services
             services.AddSingleton<AuthService>();
             services.AddSingleton<AuctionService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -37,6 +43,14 @@ namespace AutoAuction_H2
             services.AddTransient<CreateAuctionViewModel>();
             services.AddSingleton<MainViewModel>();
             services.AddTransient<UserProfileViewModel>();
+            // Content Panels
+            services.AddTransient<PrivateCarsViewModel>();
+            services.AddTransient<ProfessionalCarsViewModel>();
+            services.AddTransient<TrucksViewModel>();
+            services.AddTransient<BusesViewModel>();
+            services.AddTransient<MyBidsViewModel>();
+            services.AddTransient<MySalesViewModel>();
+
 
             // Views
             services.AddTransient<MainWindow>();
@@ -44,6 +58,7 @@ namespace AutoAuction_H2
             services.AddTransient<MainView>();
             services.AddTransient<UserProfileCard>();
             services.AddTransient<UserProfileWindow>();
+            services.AddTransient<ChangePasswordWindow>();
 
             // Build provider og gem i statisk felt
             _serviceProvider = services.BuildServiceProvider();
@@ -55,5 +70,6 @@ namespace AutoAuction_H2
 
             base.OnFrameworkInitializationCompleted();
         }
+
     }
 }
