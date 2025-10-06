@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.Services;
 

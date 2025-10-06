@@ -21,9 +21,10 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AutoAuction_H2\AutoAuction_H2.csproj" />
-    <ProjectReference Include="..\AutoAuction_H2.Models\AutoAuction_H2.Models.csproj" />
-    <ProjectReference Include="..\AutoAuction_H2.Services\AutoAuction_H2.Services.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AutoAuction_H2.Models\AutoAuction_H2.Models.csproj" />
+		<ProjectReference Include="..\AutoAuction_H2\AutoAuction_H2.csproj" />
+		<!-- ✅ tilføj UI-projekt -->
+	</ItemGroup>
+
 </Project>

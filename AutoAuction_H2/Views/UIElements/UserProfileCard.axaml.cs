@@ -1,17 +1,23 @@
-﻿using AutoAuction_H2.ViewModels;
+﻿using AutoAuction_H2.Services;
+using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views.ContentPanels;
 using AutoAuction_H2.Views.Windows;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace AutoAuction_H2.Views.UIElements
 {
     public partial class UserProfileCard : UserControl
     {
+        private readonly AuthService _authService;
+
         public UserProfileCard()
         {
             InitializeComponent();
-            DataContext = new UserProfileViewModel();
+            _authService = App.Services.GetRequiredService<AuthService>();
+            DataContext = App.Services.GetRequiredService<UserProfileViewModel>();
         }
 
         private void Logout_Click(object? sender, RoutedEventArgs e)
@@ -27,11 +33,12 @@ namespace AutoAuction_H2.Views.UIElements
 
         private async void OpenProfile_Click(object? sender, RoutedEventArgs e)
         {
-            var win = new UserProfileWindow();
+            var win = new UserProfileWindow(_authService);
             if (VisualRoot is Window owner)
                 await win.ShowDialog(owner);
             else
                 win.Show();
         }
     }
+
 }

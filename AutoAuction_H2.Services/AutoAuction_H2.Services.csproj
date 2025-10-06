@@ -6,8 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AutoAuction_H2.Models\AutoAuction_H2.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\AutoAuction_H2.Models\AutoAuction_H2.Models.csproj" />
+	</ItemGroup>
+
 
 </Project>

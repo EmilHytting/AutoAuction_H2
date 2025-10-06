@@ -1,69 +1,34 @@
-﻿using AutoAuction_H2.Services;
-using AutoAuction_H2.ViewModels;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using System.ComponentModel;
+using AutoAuction_H2.Services;
 
 namespace AutoAuction_H2.ViewModels
 {
-    public partial class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigation;
         private readonly AuctionService _auctionService;
 
-        [ObservableProperty]
-        private ViewModelBase? currentContent;
-
-        public IRelayCommand ShowHomeCommand { get; }
-        public IRelayCommand ShowAuctionOverviewCommand { get; }
-        public IRelayCommand<AuctionDetailViewModel> ShowAuctionDetailCommand { get; }
-
-        public MainViewModel()
+        public MainViewModel(INavigationService navigation, AuctionService auctionService)
         {
-            // ✅ Opret én fælles AuctionService med baseUrl fra AppState
-            _auctionService = App.AuctionService;
-
-            // ✅ Start på Home
-            CurrentContent = new HomeScreenViewModel(_auctionService);
-
-            // ✅ Init commands
-            ShowHomeCommand = new RelayCommand(ShowHomeScreen);
-            ShowAuctionOverviewCommand = new RelayCommand(ShowAuctionOverview);
-            ShowAuctionDetailCommand = new RelayCommand<AuctionDetailViewModel>(ShowAuctionDetail);
-        }
-        public MainViewModel(AuctionService auctionService)
-        {
+            _navigation = navigation;
             _auctionService = auctionService;
-            CurrentContent = new HomeScreenViewModel(_auctionService);
 
-            // Init commands
-            ShowHomeCommand = new RelayCommand(ShowHomeScreen);
-            ShowAuctionOverviewCommand = new RelayCommand(ShowAuctionOverview);
-            ShowAuctionDetailCommand = new RelayCommand<AuctionDetailViewModel>(ShowAuctionDetail);
+            if (_navigation is INotifyPropertyChanged npc)
+            {
+                npc.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(_navigation.CurrentViewModel))
+                        OnPropertyChanged(nameof(CurrentContent));
+                };
+            }
+
+            LeftPanel = new LeftPanelViewModel(_navigation, _auctionService);
+
+            // Start på Home
+            _navigation.NavigateTo(new HomeScreenViewModel(_auctionService));
         }
 
-        private void ShowHomeScreen()
-        {
-            CurrentContent = new HomeScreenViewModel(_auctionService);
-        }
-
-        private void ShowAuctionOverview()
-        {
-            var vm = new AuctionOverviewViewModel(_auctionService);
-            vm.RequestNavigate += Vm_RequestNavigate;
-            CurrentContent = vm;
-        }
-
-        private void ShowAuctionDetail(AuctionDetailViewModel vm)
-        {
-            vm.Closed += (_, __) => ShowAuctionOverview();
-            CurrentContent = vm;
-        }
-
-        private void Vm_RequestNavigate(object? sender, ViewModelBase e)
-        {
-            if (e is AuctionDetailViewModel detailVm)
-                ShowAuctionDetail(detailVm);
-            else
-                CurrentContent = e;
-        }
+        public LeftPanelViewModel LeftPanel { get; }
+        public ViewModelBase CurrentContent => _navigation.CurrentViewModel;
     }
 }

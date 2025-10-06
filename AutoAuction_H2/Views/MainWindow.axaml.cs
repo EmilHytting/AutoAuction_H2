@@ -1,25 +1,27 @@
-﻿using AutoAuction_H2.Services;
-using AutoAuction_H2.ViewModels;
-using AutoAuction_H2.Views.ContentPanels;
+﻿using AutoAuction_H2.ViewModels;
+using Avalonia; // 👈 dette er vigtigt for Application.Current
 using Avalonia.Controls;
 using Avalonia.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoAuction_H2.Views
 {
     public partial class MainWindow : Window
     {
+        private readonly MainViewModel _mainVm;
+
         public MainWindow()
         {
             InitializeComponent();
 
+            // Hent MainViewModel fra DI containeren
+            _mainVm = App.Services.GetRequiredService<MainViewModel>();
 
-
-            // Opret login view + viewmodel
-            var loginVm = new LoginViewModel();
+            // Start med login-view
+            var loginVm = App.Services.GetRequiredService<LoginViewModel>();
             loginVm.LoggedIn += ShowMainView;
 
-            var loginView = new LoginView { DataContext = loginVm };
-            MainContent.Content = loginView;
+            MainContent.Content = new LoginView { DataContext = loginVm };
         }
 
         private void Border_PointerPressed(object? sender, PointerPressedEventArgs e)
@@ -30,16 +32,11 @@ namespace AutoAuction_H2.Views
 
         public void ShowMainView()
         {
-            // Login er gennemført → vis hovedview
-            var mainView = new MainView();
+            var mainView = new MainView
+            {
+                DataContext = _mainVm
+            };
 
-            // ✅ Brug én fælles AuctionService baseret på AppState
-            var auctionService = App.AuctionService;
-
-            // ✅ ViewModel får service injiceret
-            var vm = new MainViewModel(auctionService);
-
-            mainView.DataContext = vm;
             MainContent.Content = mainView;
         }
     }

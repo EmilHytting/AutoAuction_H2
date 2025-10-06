@@ -8,7 +8,7 @@
 			 Height="600">
 	
 
-	<Grid ShowGridLines="True">
+	<Grid ShowGridLines="False">
 		
 		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
 			   Stretch="UniformToFill"

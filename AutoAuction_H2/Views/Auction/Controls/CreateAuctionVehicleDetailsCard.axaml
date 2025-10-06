@@ -35,7 +35,7 @@
       <TextBlock Text="Tr&#230;k" Grid.Row="9" Grid.Column="0" VerticalAlignment="Center"/>
       <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal" Spacing="12">
         <RadioButton Content="Ja" IsChecked="{Binding TowBar}"/>
-        <RadioButton Content="Nej" IsChecked="{Binding TowBar, Converter={StaticResource InverseBooleanConverter}}"/>
+        <RadioButton Content="Nej" IsChecked="{Binding !TowBar}"/>
       </StackPanel>
     </Grid>
   </Border>

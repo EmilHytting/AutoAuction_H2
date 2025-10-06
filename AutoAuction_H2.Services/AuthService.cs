@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.Services;
 

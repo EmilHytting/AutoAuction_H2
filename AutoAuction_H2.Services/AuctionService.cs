@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using AutoAuction_H2.Models.Entities;
 
 public class AuctionService
 {

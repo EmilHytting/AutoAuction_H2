@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia;
 
+
 namespace AutoAuction_H2.Desktop;
 
 sealed class Program
@@ -16,6 +17,6 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
             .LogToTrace();
-    }
+
+}

@@ -1,11 +1,9 @@
 ﻿using AutoAuction_H2.Models.Entities;
 using AutoAuction_H2.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
-
+using Xunit.Sdk;
 
 namespace AutoAuction_H2.ViewModels
 {
@@ -22,6 +20,12 @@ namespace AutoAuction_H2.ViewModels
         [ObservableProperty]
         private ObservableCollection<AuctionEntity> overbidAuctions = new();
 
+        [ObservableProperty]
+        private bool isLoading;
+
+        [ObservableProperty]
+        private string? errorMessage;
+
         public HomeScreenViewModel(AuctionService auctionService)
         {
             _auctionService = auctionService;
@@ -30,24 +34,36 @@ namespace AutoAuction_H2.ViewModels
 
         private async Task LoadDataAsync()
         {
-            var userId = AppState.Instance.UserId;
+            try
+            {
+                IsLoading = true;
+                ErrorMessage = null;
 
-            // Hent mine auktioner
-            MyAuctions = new ObservableCollection<AuctionEntity>(
-                await _auctionService.GetMyAuctionsAsync(userId));
+                var userId = AppState.Instance.UserId;
 
-            // Hent aktive bud
-            ActiveBids = new ObservableCollection<AuctionEntity>(
-                await _auctionService.GetActiveBidsAsync(userId));
+                // Hent mine auktioner
+                var my = await _auctionService.GetMyAuctionsAsync(userId);
+                MyAuctions = new ObservableCollection<AuctionEntity>(my);
 
-            // Hent auktioner hvor jeg er overbudt
-            OverbidAuctions = new ObservableCollection<AuctionEntity>(
-                await _auctionService.GetOverbidAuctionsAsync(userId));
+                // Hent aktive bud
+                var bids = await _auctionService.GetActiveBidsAsync(userId);
+                ActiveBids = new ObservableCollection<AuctionEntity>(bids);
 
-            // Hvis du vil have "alle auktioner":
-            var all = await _auctionService.GetAuctionsAsync();
+                // Hent auktioner hvor jeg er overbudt
+                var overbid = await _auctionService.GetOverbidAuctionsAsync(userId);
+                OverbidAuctions = new ObservableCollection<AuctionEntity>(overbid);
+
+                // Hvis du vil hente alle auktioner bare til debug/test
+                // var all = await _auctionService.GetAuctionsAsync();
+            }
+            catch (System.Exception ex)
+            {
+                ErrorMessage = $"Kunne ikke loade data: {ex.Message}";
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
-
-
     }
 }

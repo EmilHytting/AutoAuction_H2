@@ -1,62 +1,79 @@
-﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
-using System;
-using System.Linq;
-using Avalonia.Markup.Xaml;
+﻿using AutoAuction_H2.Services;
 using AutoAuction_H2.ViewModels;
 using AutoAuction_H2.Views;
-using AutoAuction_H2.Services;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
+using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Net.Http;
+using System.Linq;
+using Avalonia;
 
-namespace AutoAuction_H2;
-
-public partial class App : Application
+namespace AutoAuction_H2
 {
-    // ✅ Services til hele appen
-    public static AuthService AuthService { get; private set; } = null!;
-    public static AuctionService AuctionService { get; private set; } = null!;
-
-    public override void Initialize()
+    public partial class App : Application
     {
-        AvaloniaXamlLoader.Load(this);
-    }
+        private ServiceProvider _serviceProvider;
+        public static IServiceProvider Services { get; private set; } = default!;
 
-    public override void OnFrameworkInitializationCompleted()
-    {
-        // Init services
-        var httpClient = new HttpClient();
-        AuthService = new AuthService(httpClient);
-        AuctionService = new AuctionService(httpClient);
-
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        public override void Initialize()
         {
-            DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel()
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
-            };
+            AvaloniaXamlLoader.Load(this);
         }
 
-        base.OnFrameworkInitializationCompleted();
-    }
-
-    private void DisableAvaloniaDataAnnotationValidation()
-    {
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-        foreach (var plugin in dataValidationPluginsToRemove)
+        public override void OnFrameworkInitializationCompleted()
         {
-            BindingPlugins.DataValidators.Remove(plugin);
+            var services = new ServiceCollection();
+
+            var httpClient = new HttpClient();
+
+            // Services
+            services.AddSingleton<AuthService>();
+            services.AddSingleton<AuctionService>();
+            services.AddSingleton<INavigationService, NavigationService>();
+
+            // ViewModels
+            services.AddTransient<HomeScreenViewModel>();
+            services.AddTransient<AuctionOverviewViewModel>();
+            services.AddTransient<CreateAuctionViewModel>();
+            services.AddTransient<UserProfileViewModel>();
+            services.AddTransient<ChangePasswordViewModel>();
+
+            // Shell
+            services.AddSingleton<MainViewModel>();
+
+            _serviceProvider = services.BuildServiceProvider();
+            Services = _serviceProvider;
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                DisableAvaloniaDataAnnotationValidation();
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = Services.GetRequiredService<MainViewModel>()
+                };
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                singleViewPlatform.MainView = new MainView
+                {
+                    DataContext = Services.GetRequiredService<MainViewModel>()
+                };
+            }
+
+            base.OnFrameworkInitializationCompleted();
+        }
+
+        private void DisableAvaloniaDataAnnotationValidation()
+        {
+            var dataValidationPluginsToRemove =
+                BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
+
+            foreach (var plugin in dataValidationPluginsToRemove)
+            {
+                BindingPlugins.DataValidators.Remove(plugin);
+            }
         }
     }
 }

@@ -25,11 +25,11 @@ namespace AutoAuction_H2.ViewModels
 
         public event EventHandler? Closed;
 
-        // ✅ Bruger AuctionEntity fra API’et
-        public AuctionDetailViewModel(AuctionEntity item, bool isSeller)
+        // ✅ Vi modtager AuctionService via constructor injection
+        public AuctionDetailViewModel(AuctionEntity item, bool isSeller, AuctionService auctionService)
         {
-            _auctionService = App.AuctionService;
-            this.item = item;
+            _auctionService = auctionService ?? throw new ArgumentNullException(nameof(auctionService));
+            this.item = item ?? throw new ArgumentNullException(nameof(item));
             this.isSeller = isSeller;
 
             BackCommand = new RelayCommand(() => Closed?.Invoke(this, EventArgs.Empty));
@@ -55,7 +55,6 @@ namespace AutoAuction_H2.ViewModels
                     ErrorMessage = error ?? "Buddet blev afvist af serveren.";
                     return;
                 }
-
 
                 // Lokal UI-opdatering
                 Item.CurrentBid = amount;
