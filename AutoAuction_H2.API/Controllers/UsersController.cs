@@ -40,7 +40,7 @@ namespace AutoAuction_H2.API.Controllers
             {
                 UserName = request.UserName,
                 PasswordHash = UserEntity.DoubleHash(request.Password), // dobbelthash
-                Balance = request.Balance,
+                Balance = 500000,
                 ZipCode = request.ZipCode,
                 UserType = request.UserType,
                 CreditLimit = request.CreditLimit
