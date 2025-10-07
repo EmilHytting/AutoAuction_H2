@@ -9,12 +9,14 @@ namespace AutoAuction_H2.ViewModels
     public class PrivateCarsViewModel : ViewModelBase
     {
         private readonly AuctionService _auctionService;
+        private readonly INavigationService _navigation;
 
         public ObservableCollection<AuctionEntity> Cars { get; } = new();
 
-        public PrivateCarsViewModel(AuctionService auctionService)
+        public PrivateCarsViewModel(AuctionService auctionService, INavigationService navigation)
         {
             _auctionService = auctionService;
+            _navigation = navigation;
             _ = LoadCarsAsync();
         }
 
@@ -33,5 +35,17 @@ namespace AutoAuction_H2.ViewModels
                 // TODO: fejlbesked property til UI
             }
         }
+        public void OpenAuctionDetail(AuctionEntity auction)
+        {
+            var vm = new AuctionDetailViewModel(
+                auction,
+                auction.SellerId == AppState.Instance.UserId,
+                _auctionService,
+                _navigation   // 👈 navigation skal med
+            );
+
+            _navigation.NavigateTo(vm);
+        }
+
     }
 }

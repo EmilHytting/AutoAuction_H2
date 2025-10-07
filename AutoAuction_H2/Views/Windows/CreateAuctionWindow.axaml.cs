@@ -1,31 +1,28 @@
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Interactivity;
+﻿using Avalonia.Controls;
 using AutoAuction_H2.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoAuction_H2.Views.Windows;
 
 public partial class CreateAuctionWindow : Window
 {
+    // ✅ Parameterløs ctor til Avalonia
     public CreateAuctionWindow()
     {
         InitializeComponent();
-        var vm = new CreateAuctionViewModel();
-        vm.AuctionCreated += OnAuctionCreated;
+
+        var vm = App.Services.GetRequiredService<CreateAuctionViewModel>();
         DataContext = vm;
+        vm.AuctionCreated += (s, e) => Close();
     }
 
-    private void InitializeComponent()
+    // ✅ DI-venlig ctor (valgfri, kan bruges manuelt)
+    public CreateAuctionWindow(CreateAuctionViewModel vm)
     {
-        AvaloniaXamlLoader.Load(this);
+        InitializeComponent();
+        DataContext = vm;
+        vm.AuctionCreated += (s, e) => Close();
     }
 
-    private async void OnAuctionCreated(object? sender, System.EventArgs e)
-    {
-        var toast = new ToastWindow();
-        await toast.ShowAsync("Auktion oprettet", this);
-        Close();
-    }
-
-    private void Cancel_Click(object? sender, RoutedEventArgs e) => Close();
+    private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e) => Close();
 }

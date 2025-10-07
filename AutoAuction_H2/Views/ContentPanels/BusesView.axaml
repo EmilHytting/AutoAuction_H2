@@ -14,7 +14,10 @@
 		<DataGrid ItemsSource="{Binding Buses}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  GridLinesVisibility="All">
+                  GridLinesVisibility="All"
+				            ContextRequested="DataGrid_OnContextRequested"
+          DoubleTapped="DataGrid_OnDoubleTapped"
+				  >
 
 			<DataGrid.Columns>
 				<DataGridTextColumn Header="Auction Id" Binding="{Binding Id}" Width="80"/>

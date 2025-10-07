@@ -1,8 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:AutoAuction_H2.Views.Auction.Controls"
         x:Class="AutoAuction_H2.Views.Windows.CreateAuctionWindow"
-        Width="900" Height="580"
+        Width="950" Height="620"
         Title="Sæt til salg"
         SystemDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
@@ -11,20 +10,107 @@
         TransparencyLevelHint="AcrylicBlur,Transparent,Blur"
         Background="Transparent"
         CanResize="False">
-  <Border Padding="24" CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}">
-    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
-      <TextBlock Text="Sæt til salg" FontSize="22" FontWeight="Bold"/>
 
-      <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="20">
-        <controls:CreateAuctionBasicInfoCard/>
-        <controls:CreateAuctionVehicleDetailsCard Grid.Column="1"/>
-      </Grid>
+	<Border Padding="24" CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}">
+		<Grid RowDefinitions="Auto,*,Auto" RowSpacing="20">
 
-      <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
-        <TextBlock Foreground="Tomato" Text="{Binding ErrorMessage}" VerticalAlignment="Center"/>
-        <Button Content="Annuller" Width="120" Click="Cancel_Click"/>
-        <Button Content="Opret auktion" Width="160" Classes="accent" Command="{Binding CreateCommand}"/>
-      </StackPanel>
-    </Grid>
-  </Border>
+			<!-- Titel -->
+			<TextBlock Text="Opret Auktion" FontSize="22" FontWeight="Bold"/>
+
+			<!-- Indhold -->
+			<Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="20">
+
+				<!-- VENSTRE: Basis info -->
+				<StackPanel Spacing="8">
+					<TextBlock Text="Basis info" FontWeight="Bold"/>
+					<TextBox Watermark="Navn" Text="{Binding Name}"/>
+					<TextBox Watermark="Registreringsnummer" Text="{Binding RegNumber}"/>
+					<ComboBox ItemsSource="{Binding Years}" SelectedItem="{Binding Year}" Width="200"/>
+					<TextBox Watermark="Kilometerstand" Text="{Binding Mileage}"/>
+					<CheckBox Content="Anhængertræk" IsChecked="{Binding TowBar}"/>
+					<TextBox Watermark="Motorstørrelse (L)" Text="{Binding MotorSize}"/>
+					<TextBox Watermark="Km/l" Text="{Binding FuelEfficiency}"/>
+
+					<TextBlock Text="Brændstof" Margin="0,12,0,4" FontWeight="Bold"/>
+					<ComboBox SelectedIndex="{Binding FuelType}">
+						<ComboBoxItem Content="Benzin"/>
+						<ComboBoxItem Content="Diesel"/>
+						<ComboBoxItem Content="El"/>
+						<ComboBoxItem Content="Hydrogen"/>
+					</ComboBox>
+
+					<TextBlock Text="Køretøjstype" Margin="0,12,0,4" FontWeight="Bold"/>
+					<ComboBox ItemsSource="{Binding VehicleTypes}"
+                              SelectedItem="{Binding SelectedVehicleType}" Width="200"/>
+				</StackPanel>
+
+				<!-- HØJRE: Køretøj + auktion -->
+				<StackPanel Grid.Column="1" Spacing="12">
+
+					<!-- Car -->
+					<StackPanel IsVisible="{Binding IsCar}" Spacing="6">
+						<TextBlock Text="Bil detaljer" FontWeight="Bold"/>
+						<TextBox Watermark="Sæder" Text="{Binding Seats}"/>
+						<TextBox Watermark="Bagagerum (liter)" Text="{Binding TrunkSize}"/>
+						<CheckBox Content="Isofix" IsChecked="{Binding Isofix}"/>
+					</StackPanel>
+
+					<!-- Truck -->
+					<StackPanel IsVisible="{Binding IsTruck}" Spacing="6">
+						<TextBlock Text="Lastbil detaljer" FontWeight="Bold"/>
+						<TextBox Watermark="Lastkapacitet" Text="{Binding LoadCapacity}"/>
+						<TextBox Watermark="Højde" Text="{Binding Height}"/>
+						<TextBox Watermark="Længde" Text="{Binding Length}"/>
+						<TextBox Watermark="Bredde" Text="{Binding Width}"/>
+					</StackPanel>
+
+					<!-- Bus -->
+					<StackPanel IsVisible="{Binding IsBus}" Spacing="6">
+						<TextBlock Text="Bus detaljer" FontWeight="Bold"/>
+						<TextBox Watermark="Højde" Text="{Binding Height}"/>
+						<TextBox Watermark="Længde" Text="{Binding Length}"/>
+						<TextBox Watermark="Bredde" Text="{Binding Width}"/>
+						<TextBox Watermark="Sæder" Text="{Binding Seats}"/>
+						<TextBox Watermark="Døre" Text="{Binding Doors}"/>
+						<CheckBox Content="Toilet" IsChecked="{Binding HasToilet}"/>
+					</StackPanel>
+
+					<!-- Van -->
+					<StackPanel IsVisible="{Binding IsVan}" Spacing="6">
+						<TextBlock Text="Varevogn detaljer" FontWeight="Bold"/>
+						<TextBox Watermark="Sæder" Text="{Binding Seats}"/>
+						<TextBox Watermark="Bagagerum (liter)" Text="{Binding TrunkSize}"/>
+						<CheckBox Content="Sikkerhedsbøjle" IsChecked="{Binding SafetyBar}"/>
+						<TextBox Watermark="Lastkapacitet" Text="{Binding LoadCapacity}"/>
+					</StackPanel>
+
+					<Separator/>
+					<TextBlock Text="Auktionsindstillinger" FontWeight="Bold"/>
+					<TextBox Watermark="Startbud (kr)" Text="{Binding StartingBid}"/>
+					<DatePicker SelectedDate="{Binding CloseDate}"/>
+					<TimePicker SelectedTime="{Binding CloseTime}"/>
+				</StackPanel>
+			</Grid>
+
+			<!-- Knapper + feedback -->
+			<StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="12">
+
+				<!-- Fejlbesked -->
+				<TextBlock Foreground="Tomato"
+                           Text="{Binding ErrorMessage}"
+                           VerticalAlignment="Center"/>
+
+				<!-- Succesbesked -->
+				<TextBlock Foreground="LimeGreen"
+                           Text="{Binding SuccessMessage}"
+                           VerticalAlignment="Center"/>
+
+				<Button Content="Annuller" Width="120" Click="Cancel_Click"/>
+				<Button Content="Opret auktion" Width="160" Classes="accent" Command="{Binding CreateCommand}"/>
+			</StackPanel>
+		</Grid>
+	</Border>
 </Window>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using AutoAuction_H2.ViewModels;
@@ -17,10 +17,8 @@ public class ViewLocator : IDataTemplate
             .Replace(".ViewModels.", ".Views.", StringComparison.Ordinal)
             .Replace("ViewModel", "View", StringComparison.Ordinal);
 
-        // Try resolve directly
         var type = Type.GetType(name);
 
-        // Also try the ContentPanels namespace if the first attempt fails
         if (type is null)
         {
             var contentPanelsName = name.Replace(".Views.", ".Views.ContentPanels.", StringComparison.Ordinal);
@@ -29,14 +27,13 @@ public class ViewLocator : IDataTemplate
 
         if (type != null)
         {
-            return (Control)Activator.CreateInstance(type)!;
+            var control = (Control)Activator.CreateInstance(type)!;
+            control.DataContext = param;           // ✅ VIGTIGT!
+            return control;
         }
 
         return new TextBlock { Text = "Not Found: " + name };
     }
 
-    public bool Match(object? data)
-    {
-        return data is ViewModelBase;
-    }
+    public bool Match(object? data) => data is ViewModelBase;
 }

@@ -1,20 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
+using AutoAuction_H2.Services;
 using AutoAuction_H2.Models.Entities;
-
 
 namespace AutoAuction_H2.ViewModels
 {
-    public partial class LoginViewModel : ObservableObject
+    public partial class LoginViewModel : ViewModelBase
     {
-        private const string ApiBaseUrl = "https://localhost:44334/";
+        private readonly AuthService _authService;
         public event Action? LoggedIn;
 
         [ObservableProperty] private string username = "";
@@ -24,9 +19,13 @@ namespace AutoAuction_H2.ViewModels
         [ObservableProperty] private bool isPrivatUser = true;
         [ObservableProperty] private string cvrNumber = "";
         [ObservableProperty] private string cprNumber = "";
-
         [ObservableProperty] private string errorMessage = "";
         public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
+
+        public LoginViewModel(AuthService authService)
+        {
+            _authService = authService;
+        }
 
         partial void OnErrorMessageChanged(string value) =>
             OnPropertyChanged(nameof(HasError));
@@ -34,56 +33,32 @@ namespace AutoAuction_H2.ViewModels
         [RelayCommand]
         private async Task LoginAsync()
         {
-            var app = AppState.Instance;
-            app.UserId = 15;
-            app.UserName = "Admin1";
-            app.Balance = 5000;
-            app.UserType = 1;
-             LoggedIn?.Invoke();
-            return;
+            try
+            {
+                var (success, error, userId, userName, balance, userType) =
+                    await _authService.LoginAsync(Username, Password);
 
-            //try
-            //{
-            //    // Hash password på klienten
-            //    var passwordBytes = Encoding.UTF8.GetBytes(Password);
-            //    var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
+                if (success)
+                {
+                    var app = AppState.Instance;
+                    app.UserId = userId;
+                    app.UserName = userName ?? "";
+                    app.Balance = balance;
+                    app.UserType = userType;
+                    app.Message = "✅ Login succesfuldt";
 
-            //    var loginRequest = new
-            //    {
-            //        UserName = Username,
-            //        Password = clientHash
-            //    };
-
-            //    using var client = new HttpClient { BaseAddress = new Uri(ApiBaseUrl) };
-            //    var response = await client.PostAsJsonAsync("api/Auth/login", loginRequest);
-
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        var json = await response.Content.ReadAsStringAsync();
-            //        using var doc = JsonDocument.Parse(json);
-
-            //        // Parse API response
-            //        var app = AppState.Instance;
-            //        app.UserId = doc.RootElement.GetProperty("userId").GetInt32();
-            //        app.Message = doc.RootElement.GetProperty("message").GetString() ?? "";
-            //        app.UserName = doc.RootElement.GetProperty("userName").GetString() ?? "";
-            //        app.Balance = doc.RootElement.GetProperty("balance").GetDecimal();
-            //        app.UserType = doc.RootElement.GetProperty("userType").GetInt32();
-            //        app.CreditLimit = doc.RootElement.GetProperty("CreditLimit").GetInt32();
-
-            //        ErrorMessage = "";
-            //        LoggedIn?.Invoke();
-            //    }
-            //    else
-            //    {
-            //        var error = await response.Content.ReadAsStringAsync();
-            //        ErrorMessage = $"❌ Login fejlede: {error}";
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    ErrorMessage = $"❌ Fejl under login: {ex.Message}";
-            //}
+                    ErrorMessage = "";
+                    LoggedIn?.Invoke();
+                }
+                else
+                {
+                    ErrorMessage = $"❌ Login fejlede: {error}";
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"❌ Fejl under login: {ex.Message}";
+            }
         }
 
         [RelayCommand]
@@ -97,37 +72,27 @@ namespace AutoAuction_H2.ViewModels
 
             try
             {
-                var passwordBytes = Encoding.UTF8.GetBytes(Password);
-                var clientHash = Convert.ToBase64String(SHA256.HashData(passwordBytes));
-
+                // Kald dit UsersController endpoint via HttpClient eller en UserService
                 var createUserRequest = new
                 {
                     UserName = Username,
-                    Password = clientHash,
+                    Password = Password, // AuthService dobbelthasher på server
                     Balance = 0m,
                     UserType = IsPrivatUser ? 0 : 1,
                     CreditLimit = IsPrivatUser ? 0m : 20000m
                 };
 
-                using var client = new HttpClient { BaseAddress = new Uri(ApiBaseUrl) };
-                var response = await client.PostAsJsonAsync("api/Users", createUserRequest);
+                var response = await _authService.RegisterUserAsync(createUserRequest);
 
-                if (response.IsSuccessStatusCode)
+                if (response.success)
                 {
                     ErrorMessage = "";
                     IsCreatingUser = false;
-
-                    // Ryd form
-                    Password = "";
-                    ConfirmPassword = "";
-                    Username = "";
-                    CprNumber = "";
-                    CvrNumber = "";
+                    Password = ConfirmPassword = Username = CprNumber = CvrNumber = "";
                 }
                 else
                 {
-                    var error = await response.Content.ReadAsStringAsync();
-                    ErrorMessage = $"❌ Brugeroprettelse fejlede: {error}";
+                    ErrorMessage = $"❌ Brugeroprettelse fejlede: {response.error}";
                 }
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
-﻿using System.Net.Http.Json;
-using AutoAuction_H2.Models.Entities;
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Models.Persistence;
+using System.Net.Http.Json;
 
 public class AuctionService
 {
@@ -95,25 +96,25 @@ public class AuctionService
     public async Task<IEnumerable<AuctionEntity>> GetPrivateCarsAsync()
     {
         var all = await GetAuctionsAsync();
-        return all.Where(a => a.Vehicle is PrivateCar);
+        return all.Where(a => a.Vehicle is PrivateCarEntity);
     }
 
     public async Task<IEnumerable<AuctionEntity>> GetProfessionalCarsAsync()
     {
         var all = await GetAuctionsAsync();
-        return all.Where(a => a.Vehicle is ProfessionalCar);
+        return all.Where(a => a.Vehicle is ProfessionalCarEntity);
     }
 
     public async Task<IEnumerable<AuctionEntity>> GetTrucksAsync()
     {
         var all = await GetAuctionsAsync();
-        return all.Where(a => a.Vehicle is Truck);
+        return all.Where(a => a.Vehicle is TruckEntity);
     }
 
     public async Task<IEnumerable<AuctionEntity>> GetBusesAsync()
     {
         var all = await GetAuctionsAsync();
-        return all.Where(a => a.Vehicle is Bus);
+        return all.Where(a => a.Vehicle is BusEntity);
     }
 
     public async Task<IEnumerable<AuctionEntity>> GetMySalesAsync(int userId)
@@ -127,4 +128,5 @@ public class AuctionService
         var all = await GetAuctionsAsync();
         return all.Where(a => a.Bids.Any(b => b.UserId == userId));
     }
+
 }

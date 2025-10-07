@@ -7,37 +7,41 @@ namespace AutoAuction_H2.Views
 {
     public partial class MainWindow : Window
     {
-        private readonly MainViewModel _mainVm;
         private readonly LoginView _loginView;
         private readonly LoginViewModel _loginVm;
+        private readonly MainView _mainView;
+        private readonly MainViewModel _mainVm;
 
-        public MainWindow(MainViewModel mainVm, LoginView loginView, LoginViewModel loginVm)
+        public MainWindow(MainView mainView, MainViewModel mainVm, LoginView loginView, LoginViewModel loginVm)
         {
             InitializeComponent();
 
+            _mainView = mainView;
             _mainVm = mainVm;
             _loginView = loginView;
             _loginVm = loginVm;
 
-            // bind login viewmodel til view
+            // login → mainview
             _loginVm.LoggedIn += ShowMainView;
-            _loginView.DataContext = _loginVm;
 
+            _loginView.DataContext = _loginVm;
             MainContent.Content = _loginView;
         }
+
         private void Border_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
                 BeginMoveDrag(e);
         }
-        public void ShowMainView()
-        {
-            var mainView = new MainView
-            {
-                DataContext = _mainVm
-            };
 
-            MainContent.Content = mainView;
+        private void ShowMainView()
+        {
+            // Her binder vi hele MainView (som indeholder LeftPanel + ContentPanel)
+            _mainView.DataContext = _mainVm;
+            MainContent.Content = _mainView;
+
+            // Sørg for at navigation starter på Home
+            _mainVm.LeftPanelViewModel.ShowHomeCommand.Execute(null);
         }
     }
 }

@@ -6,17 +6,18 @@ using Avalonia.Markup.Xaml;
 
 namespace AutoAuction_H2.Views.ContentPanels;
 
-public partial class ProfessionalCarsView : UserControl
+public partial class TrucksView : UserControl
 {
-    public ProfessionalCarsView()
+    public TrucksView()
     {
         InitializeComponent();
     }
+
     private void DataGrid_OnContextRequested(object? sender, ContextRequestedEventArgs e)
     {
         if (sender is DataGrid grid && grid.SelectedItem is AuctionEntity auction)
         {
-            if (DataContext is ProfessionalCarsViewModel vm)
+            if (DataContext is TrucksViewModel vm)
                 vm.OpenAuctionDetail(auction);
         }
     }
@@ -25,8 +26,9 @@ public partial class ProfessionalCarsView : UserControl
     {
         if (sender is DataGrid grid && grid.SelectedItem is AuctionEntity auction)
         {
-            if (DataContext is ProfessionalCarsViewModel vm)
+            if (DataContext is TrucksViewModel vm)
                 vm.OpenAuctionDetail(auction);
         }
     }
 }
+

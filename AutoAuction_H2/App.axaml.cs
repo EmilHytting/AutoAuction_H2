@@ -15,14 +15,14 @@ namespace AutoAuction_H2
 {
     public partial class App : Application
     {
-        private static ServiceProvider? _serviceProvider; // <-- felt
+        private static ServiceProvider? _serviceProvider;
 
-        // ✅ Gør Services tilgængelig globalt
         public static ServiceProvider Services =>
             _serviceProvider ?? throw new InvalidOperationException("Services not initialized");
 
         public override void OnFrameworkInitializationCompleted()
         {
+
             var services = new ServiceCollection();
 
             // Hent base-URL fra AppState
@@ -31,45 +31,55 @@ namespace AutoAuction_H2
             // Registrer HttpClient med base address
             services.AddSingleton(new HttpClient { BaseAddress = baseUri });
 
-            // Services
+            // ---------- Services ----------
             services.AddSingleton<AuthService>();
             services.AddSingleton<AuctionService>();
             services.AddSingleton<INavigationService, NavigationService>();
-
-            // ViewModels
+            services.AddSingleton<VehicleFactory>();
+            // ---------- ViewModels ----------
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HomeScreenViewModel>();
             services.AddTransient<AuctionOverviewViewModel>();
             services.AddTransient<CreateAuctionViewModel>();
-            services.AddSingleton<MainViewModel>();
-            services.AddTransient<UserProfileViewModel>();
-            // Content Panels
+            services.AddSingleton<UserProfileViewModel>();
             services.AddTransient<PrivateCarsViewModel>();
             services.AddTransient<ProfessionalCarsViewModel>();
             services.AddTransient<TrucksViewModel>();
             services.AddTransient<BusesViewModel>();
             services.AddTransient<MyBidsViewModel>();
             services.AddTransient<MySalesViewModel>();
+            services.AddSingleton<MainViewModel>();
+            services.AddTransient<AuctionDetailViewModel>();
+            services.AddTransient<LeftPanelViewModel>();
 
-
-            // Views
-            services.AddTransient<MainWindow>();
+            // ---------- Views ----------
+            // MainWindow bør være Singleton, da den er root
+            services.AddSingleton<MainWindow>();
             services.AddTransient<LoginView>();
             services.AddTransient<MainView>();
-            services.AddTransient<UserProfileCard>();
-            services.AddTransient<UserProfileWindow>();
-            services.AddTransient<ChangePasswordWindow>();
+            services.AddTransient<UserProfileView>();
 
-            // Build provider og gem i statisk felt
+            // ❌ Vigtigt: UserProfileWindow skal ikke være i DI
+            // services.AddTransient<UserProfileWindow>();
+
+            services.AddTransient<ChangePasswordWindow>();
+            services.AddTransient<CreateAuctionWindow>();
+            // ---------- Build DI ----------
             _serviceProvider = services.BuildServiceProvider();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                // Hent navigation service
+                var nav = Services.GetRequiredService<INavigationService>();
+
+                // Start med HomeScreenViewModel
+                nav.NavigateTo<HomeScreenViewModel>();
+
+                // Sæt MainWindow med MainViewModel, som holder navigation
                 desktop.MainWindow = Services.GetRequiredService<MainWindow>();
             }
 
             base.OnFrameworkInitializationCompleted();
         }
-
     }
 }

@@ -11,6 +11,7 @@ namespace AutoAuction_H2.ViewModels
     public partial class AuctionDetailViewModel : ViewModelBase
     {
         private readonly AuctionService _auctionService;
+        private readonly INavigationService _navigation;
 
         [ObservableProperty] private AuctionEntity item;
         [ObservableProperty] private bool isSeller;
@@ -18,6 +19,7 @@ namespace AutoAuction_H2.ViewModels
 
         public bool IsBuyer => !IsSeller;
 
+        // ✅ Liste til budhistorik
         public ObservableCollection<string> BidHistory { get; } = new();
 
         public IRelayCommand BackCommand { get; }
@@ -25,15 +27,20 @@ namespace AutoAuction_H2.ViewModels
 
         public event EventHandler? Closed;
 
-        // ✅ AuctionService injiceres via DI
-        public AuctionDetailViewModel(AuctionEntity item, bool isSeller, AuctionService auctionService)
+        public AuctionDetailViewModel(AuctionEntity item, bool isSeller, AuctionService auctionService, INavigationService navigation)
         {
             _auctionService = auctionService;
+            _navigation = navigation;
+
             this.item = item;
             this.isSeller = isSeller;
 
-            BackCommand = new RelayCommand(() => Closed?.Invoke(this, EventArgs.Empty));
+            BackCommand = new RelayCommand(OnBack);
             PlaceBidCommand = new AsyncRelayCommand<decimal>(PlaceBidAsync);
+
+            // Tilføj initial bid til historik
+            if (item.CurrentBid > 0)
+                BidHistory.Add($"{DateTime.Now:t} Startbud: {item.CurrentBid:N0} kr");
         }
 
         private async Task PlaceBidAsync(decimal amount)
@@ -56,14 +63,22 @@ namespace AutoAuction_H2.ViewModels
                     return;
                 }
 
-                // Lokal UI-opdatering
+                // ✅ Opdater CurrentBid
                 Item.CurrentBid = amount;
+
+                // ✅ Tilføj til historik
                 BidHistory.Insert(0, $"{DateTime.Now:t} {AppState.Instance.UserName}: {amount:N0} kr");
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
             }
+        }
+
+        private void OnBack()
+        {
+            // Gå tilbage til oversigten
+            _navigation.NavigateTo<AuctionOverviewViewModel>();
         }
     }
 }

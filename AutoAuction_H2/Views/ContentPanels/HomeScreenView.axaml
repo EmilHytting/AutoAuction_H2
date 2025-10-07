@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
-             x:Class="AutoAuction_H2.Views.HomeScreenView"
+             x:Class="AutoAuction_H2.Views.ContentPanels.HomeScreenView"
              x:DataType="vm:HomeScreenViewModel">
 
 	<Grid Margin="10" RowDefinitions="Auto,*" RowSpacing="20">
@@ -15,9 +15,9 @@
 			<StackPanel>
 				<TextBlock Text="Dine auktioner" FontSize="12" FontWeight="Bold"/>
 				<DataGrid ItemsSource="{Binding MyAuctions}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          Height="150">
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            Height="150">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
 						<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
@@ -31,9 +31,9 @@
 			<StackPanel>
 				<TextBlock Text="Auktioner du har bud på" FontSize="12" FontWeight="Bold"/>
 				<DataGrid ItemsSource="{Binding ActiveBids}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          Height="125">
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            Height="125">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
 						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
@@ -48,9 +48,9 @@
 			<StackPanel>
 				<TextBlock Text="Auktioner hvor du er overbudt" FontSize="12" FontWeight="Bold"/>
 				<DataGrid ItemsSource="{Binding OverbidAuctions}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          Height="125">
+                            AutoGenerateColumns="False"
+                            IsReadOnly="True"
+                            Height="125">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
 						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />

@@ -90,6 +90,6 @@
 			</StackPanel>
 
 			<!-- Profil nederst -->
-			<ContentPresenter Grid.Row="1" Content="{Binding UserProfileCard}" />		</Grid>
+			<ContentPresenter Grid.Row="1" Content="{Binding UserProfileViewModel}" />		</Grid>
 	</Border>
 </UserControl>

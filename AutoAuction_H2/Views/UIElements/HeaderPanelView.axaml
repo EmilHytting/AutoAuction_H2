@@ -13,11 +13,7 @@
                        Foreground="White"
                        FontSize="18"
                        FontWeight="Bold"/>
-            <Button Grid.Column="1"
-                    Margin="8,0,0,0"
-                    Content="Vis auktion (demo)"
-                    Classes="accent"
-                    Command="{Binding ShowAuctionDetailCommand}"/>
+            
         </Grid>
 	</Border>
 </UserControl>

@@ -1,18 +1,36 @@
-﻿using AutoAuction_H2.ViewModels;
+﻿using System;
+using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 
-public class NavigationService : INavigationService
+namespace AutoAuction_H2.ViewModels
 {
-    private ViewModelBase _currentViewModel;
-
-    public ViewModelBase CurrentViewModel => _currentViewModel;
-
-    public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase, new()
+    public class NavigationService : INavigationService, INotifyPropertyChanged
     {
-        _currentViewModel = new TViewModel();
-    }
+        private ViewModelBase? _currentViewModel;
+        public ViewModelBase? CurrentViewModel
+        {
+            get => _currentViewModel;
+            private set
+            {
+                if (_currentViewModel != value)
+                {
+                    _currentViewModel = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentViewModel)));
+                }
+            }
+        }
 
-    public void NavigateTo(ViewModelBase viewModel)
-    {
-        _currentViewModel = viewModel;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void NavigateTo(ViewModelBase viewModel)
+        {
+            CurrentViewModel = viewModel;
+        }
+
+        public void NavigateTo<TViewModel>() where TViewModel : ViewModelBase
+        {
+            var vm = App.Services.GetRequiredService<TViewModel>();
+            NavigateTo(vm);
+        }
     }
 }

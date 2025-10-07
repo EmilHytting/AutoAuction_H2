@@ -12,6 +12,7 @@ public partial class MainView : UserControl
         InitializeComponent();
     }
 
+
     private void UserControl_PointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)

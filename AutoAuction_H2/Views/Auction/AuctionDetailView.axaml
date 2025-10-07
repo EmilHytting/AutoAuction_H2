@@ -1,46 +1,106 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
              x:Class="AutoAuction_H2.Views.Auction.AuctionDetailView"
-			 Height="500"
-			 Width="500"
-			 >
-	
-  <Border CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}" Padding="16">
-    <Grid ColumnDefinitions="*,2*" RowDefinitions="Auto,* ,Auto" ColumnSpacing="16" RowSpacing="12">
-      <Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png" Stretch="UniformToFill" Opacity="0.2" IsHitTestVisible="False" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+             Background="Transparent">
 
-      <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Spacing="8">
-        <TextBlock Text="Auction info" FontWeight="SemiBold"/>
-        <Border Background="{StaticResource CardBackgroundBrush}" Height="220"/>
-        <ItemsControl ItemsSource="{Binding BidHistory}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding}"/>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </StackPanel>
+	<Border CornerRadius="8"
+            Background="{StaticResource PanelBackgroundBrush}"
+            Padding="16">
 
-      <StackPanel Grid.Column="1" Grid.Row="0" Spacing="8">
-        <TextBlock Text="{Binding Item.Name}" FontSize="26" FontWeight="Bold"/>
-        <TextBlock Text="{Binding Item.ClosingDate, StringFormat='Closing {0:dd/MM/yy}'}" FontSize="18" HorizontalAlignment="Right"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-          <TextBlock Text="Current bid:" FontSize="22"/>
-          <TextBlock Text="{Binding Item.CurrentBid, StringFormat='DKK {0:N0}'}" FontSize="22" FontWeight="Bold"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-          <Button Content="Accept" Classes="success" IsVisible="{Binding IsSeller}" Command="{Binding AcceptBidCommand}" Width="120"/>
-          <Button Content="Make a bid" Classes="accent" IsVisible="{Binding IsBuyer}" Click="MakeBid_Click" Width="120"/>
-        </StackPanel>
-        <TextBlock Foreground="Tomato" TextWrapping="Wrap" Text="{Binding ErrorMessage}"/>
-      </StackPanel>
+		<Grid ColumnDefinitions="2*,3*"
+              RowDefinitions="*,Auto"
+              ColumnSpacing="12"
+              RowSpacing="12">
 
-      <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left">
-        <Button Content="Back" Command="{Binding BackCommand}" Width="120"/>
-      </StackPanel>
-    </Grid>
-  </Border>
+			<!-- VENSTRE: Auktion + køretøj info -->
+			<StackPanel Grid.Column="0" Spacing="12">
+				<!-- Auktion Info -->
+				<Border Background="{StaticResource CardBackgroundBrush}"
+                        Padding="10" CornerRadius="6">
+					<StackPanel Spacing="4">
+						<TextBlock Text="Auktionsinfo" FontSize="16" FontWeight="Bold" Margin="0,0,0,6"/>
+						<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="Auto,*"
+                              RowSpacing="2"
+                              ColumnSpacing="6">
+							<TextBlock Grid.Row="0" Grid.Column="0" Text="Navn:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Item.Vehicle.Name}"/>
+
+							<TextBlock Grid.Row="1" Grid.Column="0" Text="Registreringsnr.:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Item.Vehicle.RegistrationNumber}"/>
+
+							<TextBlock Grid.Row="2" Grid.Column="0" Text="Årgang:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Item.Vehicle.Year}"/>
+
+							<TextBlock Grid.Row="3" Grid.Column="0" Text="Km stand:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Item.Vehicle.Mileage} km"/>
+
+							<TextBlock Grid.Row="4" Grid.Column="0" Text="Motor:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Item.Vehicle.MotorSize} L"/>
+
+							<TextBlock Grid.Row="5" Grid.Column="0" Text="Brændstof:" FontWeight="SemiBold"/>
+							<TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding Item.Vehicle.FuelType}"/>
+						</Grid>
+					</StackPanel>
+				</Border>
+
+				<!-- Køretøjsdetaljer -->
+				<Border Background="{StaticResource CardBackgroundBrush}" Padding="10" CornerRadius="6">
+					<StackPanel Spacing="4">
+						<TextBlock Text="Køretøjsdetaljer" FontSize="16" FontWeight="Bold" Margin="0,0,0,6"/>
+						<!-- Sub-sections like Bil, Lastbil, Bus, Varevogn -->
+						<!-- ... (same as before, just smaller padding/font) -->
+					</StackPanel>
+				</Border>
+			</StackPanel>
+
+			<!-- HØJRE: Bud & handlinger -->
+			<StackPanel Grid.Column="1" Spacing="12">
+				<TextBlock Text="{Binding Item.Vehicle.Name}" FontSize="20" FontWeight="Bold"/>
+				<TextBlock Text="{Binding Item.EndTime, StringFormat='Slutter {0:dd/MM/yyyy HH:mm}'}"
+                           FontSize="14" Foreground="Gray"/>
+
+				<Border Background="{StaticResource CardBackgroundBrush}" Padding="10" CornerRadius="6">
+					<StackPanel Spacing="6">
+						<StackPanel Orientation="Horizontal" Spacing="6">
+							<TextBlock Text="Nuværende bud:" FontSize="16"/>
+							<TextBlock Text="{Binding Item.CurrentBid, StringFormat='DKK {0:N0}'}"
+									   FontSize="16" FontWeight="Bold"/>
+						</StackPanel>
+
+						<StackPanel Orientation="Horizontal" Spacing="6">
+							<TextBlock Text="Mindste bud:" FontSize="16"/>
+							<TextBlock Text="{Binding Item.MinPrice, StringFormat='DKK {0:N0}'}"
+									   FontSize="16" FontWeight="Bold"/>
+						</StackPanel>
+
+						<Button Content="Afgiv bud"
+                                Classes="accent"
+                                IsVisible="{Binding IsBuyer}"
+                                Click="MakeBid_Click"
+                                Width="120"
+                                HorizontalAlignment="Right"/>
+					</StackPanel>
+				</Border>
+
+				<TextBlock Foreground="Tomato" TextWrapping="Wrap" Text="{Binding ErrorMessage}"/>
+
+				<!-- Bud historik -->
+				<Border Background="{StaticResource CardBackgroundBrush}" Padding="10" CornerRadius="6">
+					<StackPanel Spacing="4">
+						<TextBlock Text="Bud historik" FontWeight="Bold" FontSize="16"/>
+						<ListBox ItemsSource="{Binding BidHistory}" Height="150"/>
+					</StackPanel>
+				</Border>
+			</StackPanel>
+
+			<!-- Nederst: Tilbage -->
+			<StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Orientation="Horizontal"
+                        HorizontalAlignment="Left" Margin="0,8,0,0">
+				
+				<Button Content="Tilbage" Command="{Binding BackCommand}" Width="100"/>
+			</StackPanel>
+			
+		</Grid>
+	</Border>
 </UserControl>

@@ -1,0 +1,49 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             x:Class="AutoAuction_H2.Views.UIElements.UserProfileView">
+
+    <Border CornerRadius="12" Padding="24">
+        <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+
+            <!-- Brugernavn og saldo -->
+            <StackPanel Grid.Column="0">
+                <TextBlock FontWeight="Bold"
+                           FontSize="15"
+                           Text="{Binding UserName, FallbackValue='Bruger'}"/>
+                <TextBlock Foreground="Green"
+                           FontSize="15"
+                           Text="{Binding Balance, StringFormat='Saldo: {0:N0} kr'}"/>
+            </StackPanel>
+
+            <!-- Spacer -->
+            <Panel Grid.Column="1" />
+
+            <!-- Knapper -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                <!-- Profil -->
+                <Button Command="{Binding OpenProfileCommand}"
+                        Width="28" Height="30"
+                        ToolTip.Tip="Profil"
+                        Background="Transparent"
+                        BorderBrush="Transparent">
+                    <Path Fill="WhiteSmoke" Stretch="Uniform"
+                          Width="20" Height="20"
+                          Data="M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 4a7.96 7.96 0 00-.26-2l2.12-1.65a1 1 0 00.24-1.31l-2-3.46a1 1 0 00-1.2-.45l-2.49 1a8.06 8.06 0 00-1.73-1l-.38-2.65A1 1 0 0013.92 0h-3.84a1 1 0 00-1 .83L8.7 3.48a8.06 8.06 0 00-1.73 1l-2.49-1a1 1 0 00-1.2.45l-2 3.46a1 1 0 00.24 1.31L3.64 10a7.96 7.96 0 000 4L1.52 15.65a1 1 0 00-.24 1.31l2 3.46a1 1 0 001.2.45l2.49-1a8.06 8.06 0 001.73 1l.38 2.65a1 1 0 001 .83h3.84a1 1 0 001-.83l.38-2.65a8.06 8.06 0 001.73-1l2.49 1a1 1 0 001.2-.45l2-3.46a1 1 0 00-.24-1.31L20.68 14a7.96 7.96 0 00.26-2z" />
+                </Button>
+
+                <!-- Logout -->
+                <Button Command="{Binding LogoutCommand}"
+                        Width="28" Height="30"
+                        ToolTip.Tip="Log ud"
+                        Background="Transparent"
+                        BorderBrush="Transparent">
+                    <Path Fill="WhiteSmoke"
+                          Stretch="Uniform"
+                          Width="20" Height="20"
+                          Data="M3,3 L3,21 L13,21 L13,17 L11,17 L11,19 L5,19 L5,5 L11,5 L11,7 L13,7 L13,3 Z M17,12 L13,8 L13,11 L7,11 L7,13 L13,13 L13,16 Z"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

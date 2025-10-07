@@ -1,17 +1,33 @@
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Input;
+using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.ViewModels;
 
-namespace AutoAuction_H2.Views.ContentPanels;
-
-public partial class AuctionOverviewView : UserControl
+namespace AutoAuction_H2.Views.ContentPanels
 {
-    public AuctionOverviewView()
+    public partial class AuctionOverviewView : UserControl
     {
-        InitializeComponent();
-    }
+        public AuctionOverviewView()
+        {
+            InitializeComponent();
+        }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
+        private void DataGrid_OnContextRequested(object? sender, ContextRequestedEventArgs e)
+        {
+            if (sender is DataGrid grid && grid.SelectedItem is AuctionEntity auction)
+            {
+                if (DataContext is AuctionOverviewViewModel vm)
+                    vm.OpenAuctionDetail(auction);
+            }
+        }
+
+        private void DataGrid_OnDoubleTapped(object? sender, TappedEventArgs e)
+        {
+            if (sender is DataGrid grid && grid.SelectedItem is AuctionEntity auction)
+            {
+                if (DataContext is AuctionOverviewViewModel vm)
+                    vm.OpenAuctionDetail(auction);
+            }
+        }
     }
 }

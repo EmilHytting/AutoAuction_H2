@@ -1,3 +1,4 @@
+﻿using AutoAuction_H2.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.ComponentModel;

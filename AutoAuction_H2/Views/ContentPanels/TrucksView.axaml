@@ -1,20 +1,20 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
-             x:Class="AutoAuction_H2.Views.ContentPanels.PrivateCarsView"
-             x:DataType="vm:PrivateCarsViewModel">
+             x:Class="AutoAuction_H2.Views.ContentPanels.TrucksView"
+             x:DataType="vm:TrucksViewModel">
 
 	<DockPanel Margin="10">
 
 		<!-- Overskrift -->
-		<TextBlock Text="🚗 Private biler"
+		<TextBlock Text="🚛 Lastbiler"
                    FontSize="20"
                    FontWeight="Bold"
                    Margin="0,0,0,10"
                    DockPanel.Dock="Top"/>
 
-		<!-- Datagrid med biler -->
-		<DataGrid ItemsSource="{Binding Cars}"
+		<!-- Datagrid med lastbiler -->
+		<DataGrid ItemsSource="{Binding Trucks}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   GridLinesVisibility="All"
@@ -28,11 +28,14 @@
 				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" Width="120"/>
 				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
 
-				<!-- Bil-info -->
+				<!-- Lastbil-info -->
 				<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
 				<DataGridTextColumn Header="Årgang" Binding="{Binding Vehicle.Year}" Width="80"/>
 				<DataGridTextColumn Header="Km" Binding="{Binding Vehicle.Mileage}" Width="120"/>
 				<DataGridTextColumn Header="Brændstof" Binding="{Binding Vehicle.FuelType}" Width="100"/>
+				<DataGridTextColumn Header="Motor Størrelse" Binding="{Binding Vehicle.MotorSize}" Width="120"/>
+				<DataGridTextColumn Header="Effektivitet (km/l)" Binding="{Binding Vehicle.FuelEfficiency}" Width="150"/>
+				<DataGridTextColumn Header="Kørekort" Binding="{Binding Vehicle.LicenseType}" Width="100"/>
 			</DataGrid.Columns>
 		</DataGrid>
 	</DockPanel>

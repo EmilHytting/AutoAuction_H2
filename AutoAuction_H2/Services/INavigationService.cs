@@ -1,8 +1,12 @@
-﻿using AutoAuction_H2.ViewModels;
+﻿using System.ComponentModel;
 
-public interface INavigationService
+namespace AutoAuction_H2.ViewModels
 {
-    ViewModelBase CurrentViewModel { get; }
-    void NavigateTo<TViewModel>() where TViewModel : ViewModelBase, new();
-    void NavigateTo(ViewModelBase viewModel);
+    public interface INavigationService : INotifyPropertyChanged
+    {
+        ViewModelBase? CurrentViewModel { get; }
+
+        void NavigateTo(ViewModelBase viewModel);
+        void NavigateTo<TViewModel>() where TViewModel : ViewModelBase;
+    }
 }

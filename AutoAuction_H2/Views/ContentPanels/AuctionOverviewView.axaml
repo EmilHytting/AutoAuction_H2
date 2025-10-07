@@ -1,35 +1,30 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ac="clr-namespace:AutoAuction_H2.Views.Auction.Controls"
-             xmlns:av="clr-namespace:AutoAuction_H2.Views.Auction"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="AutoAuction_H2.Views.ContentPanels.AuctionOverviewView">
-  <Border CornerRadius="12" Background="{StaticResource PanelBackgroundBrush}" Padding="12">
-    <Grid ColumnDefinitions="210,*" ColumnSpacing="16">
-      <!-- Background image to match window styling -->
-      <Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
-             Stretch="UniformToFill"
-             Opacity="0.25"
-             IsHitTestVisible="False"
-             Grid.ColumnSpan="2"/>
+             xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             x:Class="AutoAuction_H2.Views.ContentPanels.AuctionOverviewView"
+             x:DataType="vm:AuctionOverviewViewModel">
 
-      <!-- Left sidebar -->
-      <ac:AuctionSidebar Grid.Column="0"/>
+	<Grid Margin="10" RowDefinitions="Auto,*" RowSpacing="20">
 
-      <!-- Right side content -->
-      <StackPanel Grid.Column="1" Spacing="12">
-        <TextBlock Text="Aktuelle auktioner" FontSize="18" FontWeight="SemiBold"/>
-        <ac:AuctionTable Items="{Binding CurrentAuctions}"
-                          ActionText="Make a bid"
-                          ActionCommand="{Binding OpenBuyerDetailCommand}"/>
+		<!-- Overskrift -->
+		<TextBlock Text="🔨 Alle auktioner" FontSize="16" FontWeight="Bold"/>
 
-        <TextBlock Text="Dine auktioner" FontSize="18" FontWeight="SemiBold" Margin="0,8,0,0"/>
-        <ac:AuctionTable Items="{Binding YourAuctions}"
-                          ActionText="Open"
-                          ActionCommand="{Binding OpenSellerDetailCommand}"/>
-      </StackPanel>
-    </Grid>
-  </Border>
+		<!-- Liste over auktioner -->
+		<DataGrid Grid.Row="1"
+				  ItemsSource="{Binding ActiveAuctions}"
+				  AutoGenerateColumns="False"
+				  IsReadOnly="True"
+				  Height="400"
+				  ContextRequested="DataGrid_OnContextRequested"
+				  DoubleTapped="DataGrid_OnDoubleTapped">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
+				<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
+				<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
+				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
+				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+	</Grid>
 </UserControl>

@@ -43,10 +43,11 @@ public partial class ChangePasswordViewModel : ObservableObject
             return;
         }
 
-        // ✅ Nu bruger vi userId i stedet for UserName
+        // ✅ Hent også username fra AppState
         var (success, error) = await _authService.ChangePasswordAsync(
             AppState.Instance.UserId,
-            NewPassword);
+            NewPassword,
+            AppState.Instance.UserName);
 
         if (!success)
         {
@@ -57,6 +58,7 @@ public partial class ChangePasswordViewModel : ObservableObject
         SuccessMessage = "✅ Adgangskoden blev ændret.";
         PasswordChanged?.Invoke(this, EventArgs.Empty);
     }
+
 
 
     public event EventHandler? PasswordChanged;

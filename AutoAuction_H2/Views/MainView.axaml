@@ -1,25 +1,21 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:views="clr-namespace:AutoAuction_H2.Views"
-             
-			 x:Class="AutoAuction_H2.Views.MainView"
+             x:Class="AutoAuction_H2.Views.MainView"
              Background="Transparent"
-			 Width="800"
-			 Height="600">
-	
+             Width="800"
+             Height="600">
 
 	<Grid ShowGridLines="False">
-		
 		<Image Source="avares://AutoAuction_H2/Assets/BackgroundImage.png"
-			   Stretch="UniformToFill"
-			   Opacity="0.3"
-			   IsHitTestVisible="True"
-			   Grid.RowSpan="2"
-			   Grid.ColumnSpan="2"
-			   Width="900"
-			   Height="600"
-			   />
-		
+               Stretch="UniformToFill"
+               Opacity="0.7"
+               IsHitTestVisible="True"
+               Grid.RowSpan="2"
+               Grid.ColumnSpan="3"
+               Width="900"
+               Height="600"/>
+
 		<Grid.RowDefinitions>
 			<RowDefinition Height="70"/>
 			<RowDefinition Height="*"/>
@@ -31,15 +27,16 @@
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
-		<!-- Top row -->
-
+		<!-- Top -->
 		<views:LogoPanelView Grid.Row="0" Grid.Column="0"/>
 		<views:HeaderPanelView Grid.Row="0" Grid.Column="1"/>
 		<views:WindowButtonPanelView Grid.Row="0" Grid.Column="2"/>
-		<!-- Left column -->
-		<views:LeftPanelView Grid.Row="1" Grid.Column="0" DataContext="{Binding}" />		<!-- Main content area -->
-		<views:ContentPanelView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-								DataContext="{Binding}" />
 
+		<!-- VENSTRE MENU: giv den LeftPanelViewModel som DataContext -->
+		<views:LeftPanelView Grid.Row="1" Grid.Column="0"
+                             DataContext="{Binding LeftPanelViewModel}" />
+
+		<!-- INDHOLD: håndteres af ContentPanelView via RelativeSource til MainView -->
+		<views:ContentPanelView Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
 	</Grid>
 </UserControl>
