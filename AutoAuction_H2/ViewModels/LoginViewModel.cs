@@ -100,7 +100,7 @@ namespace AutoAuction_H2.ViewModels
                     if (success)
                         ResetFields();
                     else
-                        ErrorMessage = $"❌ Brugeroprettelse fejlede (privat): {error}";
+                        ErrorMessage = $"❌ Brugeroprettelse fejlede: {error}";
                 }
                 else
                 {
@@ -116,7 +116,7 @@ namespace AutoAuction_H2.ViewModels
                     if (success)
                         ResetFields();
                     else
-                        ErrorMessage = $"❌ Brugeroprettelse fejlede (firma): {error}";
+                        ErrorMessage = $"❌ Brugeroprettelse fejlede: {error}";
                 }
             }
             catch (Exception ex)

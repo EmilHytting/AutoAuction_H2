@@ -39,7 +39,8 @@ namespace AutoAuction_H2.Services
                 return (true, null);
 
             var msg = await response.Content.ReadAsStringAsync();
-            return (false, msg);
+            return (false, string.IsNullOrWhiteSpace(msg) ? "Ugyldigt brugernavn" : msg);
+
         }
 
         // -------------------------
@@ -48,6 +49,7 @@ namespace AutoAuction_H2.Services
         public async Task<(bool success, string? error)> CreateCorporateUserAsync(
             string username, string passwordHash, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
         {
+
             var request = new
             {
                 UserName = username,
@@ -65,7 +67,8 @@ namespace AutoAuction_H2.Services
                 return (true, null);
 
             var msg = await response.Content.ReadAsStringAsync();
-            return (false, msg);
+            return (false, string.IsNullOrWhiteSpace(msg) ? "Ugyldigt brugernavn" : msg);
+
         }
 
         // -------------------------

@@ -36,33 +36,32 @@ namespace AutoAuction_H2.API.Controllers
         [HttpPost]
         public async Task<ActionResult<UserEntity>> CreateUser(CreateUserRequest request)
         {
+            // 1. Check if username already exists
+            bool exists = await _context.Users.AnyAsync(u => u.UserName == request.UserName);
+            if (exists)
+            {
+                return BadRequest("Brugernavn findes allerede");
+            }
+
+            // 2. Create user
             var user = new UserEntity
             {
                 UserName = request.UserName,
                 PasswordHash = UserEntity.DoubleHash(request.Password), // dobbelthash
-                Balance = 500000,
+                Balance = 500000, // always default start balance
                 ZipCode = request.ZipCode,
                 UserType = request.UserType,
                 CreditLimit = request.CreditLimit
             };
 
+            // 3. Save user
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // 4. Return Created result
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
-        
-        // Changes the password.
-              [HttpPut("{id}/password")]
-        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordRequest request)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
 
-            user.PasswordHash = UserEntity.DoubleHash(request.Password);
-
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
 
         public class ChangePasswordRequest
         {
