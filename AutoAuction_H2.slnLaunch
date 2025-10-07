@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "App+API",
+    "Projects": [
+      {
+        "Path": "AutoAuction_H2.Desktop\\AutoAuction_H2.Desktop.csproj",
+        "Action": "Start",
+        "DebugTarget": "AutoAuction_H2.Desktop"
+      },
+      {
+        "Path": "AutoAuction_H2.API\\AutoAuction_H2.API.csproj",
+        "Action": "Start",
+        "DebugTarget": "IIS Express"
+      }
+    ]
+  }
+]

@@ -1,90 +1,101 @@
-﻿using System;
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Models.Persistence;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using AutoAuction_H2.Models.Entities;
-using AutoAuction_H2.Models.Interfaces;
 
 namespace AutoAuction_H2.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
-        private readonly List<User> _users = new();
+        private readonly HttpClient _client;
 
-        // ---------- CREATE ----------
-        public Task<PrivateUser> CreatePrivateUserAsync(string userName, string password, int zipCode, decimal initialBalance, string cprNumber)
+        public UserService(HttpClient client)
         {
-            var user = new PrivateUser(userName, password, zipCode, initialBalance, cprNumber);
-            _users.Add(user);
-            return Task.FromResult(user);
+            _client = client;
         }
 
-        public Task<CorporateUser> CreateCorporateUserAsync(string userName, string password, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
+        // -------------------------
+        // CREATE PRIVATE USER
+        // -------------------------
+        public async Task<(bool success, string? error)> CreatePrivateUserAsync(
+            string username, string passwordHash, int zipCode, decimal initialBalance, string cprNumber)
         {
-            var user = new CorporateUser(userName, password, zipCode, initialBalance, cvrNumber, credit);
-            _users.Add(user);
-            return Task.FromResult(user);
+            var request = new
+            {
+                UserName = username,
+                Password = passwordHash, // hash1 fra klient
+                ZipCode = zipCode,
+                Balance = initialBalance,
+                CprNumber = cprNumber,
+                UserType = 0,
+                CreditLimit = 0m
+            };
+
+            var response = await _client.PostAsJsonAsync("api/users", request);
+
+            if (response.IsSuccessStatusCode)
+                return (true, null);
+
+            var msg = await response.Content.ReadAsStringAsync();
+            return (false, msg);
         }
 
-        // ---------- AUTH ----------
-        public Task<User?> AuthenticateAsync(string userName, string password)
+        // -------------------------
+        // CREATE CORPORATE USER
+        // -------------------------
+        public async Task<(bool success, string? error)> CreateCorporateUserAsync(
+            string username, string passwordHash, int zipCode, decimal initialBalance, string cvrNumber, decimal credit)
         {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null) return Task.FromResult<User?>(null);
+            var request = new
+            {
+                UserName = username,
+                Password = passwordHash, // hash1 fra klient
+                ZipCode = zipCode,
+                Balance = initialBalance,
+                CvrNumber = cvrNumber,
+                UserType = 1,
+                CreditLimit = credit
+            };
 
-            return Task.FromResult(user.VerifyPassword(password) ? user : null);
+            var response = await _client.PostAsJsonAsync("api/users", request);
+
+            if (response.IsSuccessStatusCode)
+                return (true, null);
+
+            var msg = await response.Content.ReadAsStringAsync();
+            return (false, msg);
         }
 
-        public Task<User?> FindByUserNameAsync(string userName)
+        // -------------------------
+        // GET ALL USERS
+        // -------------------------
+        public async Task<List<UserEntity>?> GetAllUsersAsync()
         {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            return Task.FromResult(user);
+            return await _client.GetFromJsonAsync<List<UserEntity>>("api/users");
         }
 
-        public Task<IEnumerable<User>> GetAllUsersAsync()
+        // -------------------------
+        // GET USER BY ID
+        // -------------------------
+        public async Task<UserEntity?> GetUserByIdAsync(int id)
         {
-            return Task.FromResult<IEnumerable<User>>(_users);
+            return await _client.GetFromJsonAsync<UserEntity>($"api/users/{id}");
         }
 
-        // ---------- UPDATE ----------
-        public Task<bool> UpdatePasswordAsync(string userName, string newPassword)
+        // -------------------------
+        // DELETE USER
+        // -------------------------
+        public async Task<(bool success, string? error)> DeleteUserAsync(int userId)
         {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null) return Task.FromResult(false);
+            var response = await _client.DeleteAsync($"api/users/{userId}");
 
-            // hash på samme måde som User gør det
-            var hash = User.HashPasswordForService(newPassword);
-            user.GetType().GetProperty("PasswordHash")?.SetValue(user, hash);
+            if (response.IsSuccessStatusCode)
+                return (true, null);
 
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> UpdateZipCodeAsync(string userName, int newZipCode)
-        {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null) return Task.FromResult(false);
-
-            user.GetType().GetProperty("ZipCode")?.SetValue(user, newZipCode);
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> UpdateBalanceAsync(string userName, decimal newBalance)
-        {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null) return Task.FromResult(false);
-
-            user.GetType().GetProperty("Balance")?.SetValue(user, newBalance);
-            return Task.FromResult(true);
-        }
-
-        // ---------- DELETE ----------
-        public Task<bool> DeleteUserAsync(string userName)
-        {
-            var user = _users.FirstOrDefault(u => u.UserName == userName);
-            if (user == null) return Task.FromResult(false);
-
-            _users.Remove(user);
-            return Task.FromResult(true);
+            var msg = await response.Content.ReadAsStringAsync();
+            return (false, msg);
         }
     }
 }

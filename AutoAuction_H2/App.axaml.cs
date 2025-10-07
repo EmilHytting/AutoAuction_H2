@@ -9,6 +9,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 
 namespace AutoAuction_H2
@@ -22,7 +23,6 @@ namespace AutoAuction_H2
 
         public override void OnFrameworkInitializationCompleted()
         {
-
             var services = new ServiceCollection();
 
             // Hent base-URL fra AppState
@@ -30,12 +30,14 @@ namespace AutoAuction_H2
 
             // Registrer HttpClient med base address
             services.AddSingleton(new HttpClient { BaseAddress = baseUri });
-
+            services.AddScoped<UserService>();
             // ---------- Services ----------
             services.AddSingleton<AuthService>();
             services.AddSingleton<AuctionService>();
+            services.AddSingleton<UserService>();  // ✅ Tilføjet her
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<VehicleFactory>();
+
             // ---------- ViewModels ----------
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HomeScreenViewModel>();
@@ -59,11 +61,12 @@ namespace AutoAuction_H2
             services.AddTransient<MainView>();
             services.AddTransient<UserProfileView>();
 
-            // ❌ Vigtigt: UserProfileWindow skal ikke være i DI
+            // ❌ UserProfileWindow skal ikke være i DI (oprettes manuelt når den bruges)
             // services.AddTransient<UserProfileWindow>();
 
             services.AddTransient<ChangePasswordWindow>();
             services.AddTransient<CreateAuctionWindow>();
+
             // ---------- Build DI ----------
             _serviceProvider = services.BuildServiceProvider();
 

@@ -1,15 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
-using AutoAuction_H2.Services;
-using AutoAuction_H2.Models.Entities;
 
 namespace AutoAuction_H2.ViewModels
 {
     public partial class LoginViewModel : ViewModelBase
     {
         private readonly AuthService _authService;
+        private readonly UserService _userService;
         public event Action? LoggedIn;
 
         [ObservableProperty] private string username = "";
@@ -20,16 +23,22 @@ namespace AutoAuction_H2.ViewModels
         [ObservableProperty] private string cvrNumber = "";
         [ObservableProperty] private string cprNumber = "";
         [ObservableProperty] private string errorMessage = "";
+        [ObservableProperty] private int zipCode = 0;
+
         public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
-        public LoginViewModel(AuthService authService)
+        public LoginViewModel(AuthService authService, UserService userService)
         {
             _authService = authService;
+            _userService = userService;
         }
 
         partial void OnErrorMessageChanged(string value) =>
             OnPropertyChanged(nameof(HasError));
 
+        // -------------------------
+        // LOGIN
+        // -------------------------
         [RelayCommand]
         private async Task LoginAsync()
         {
@@ -61,6 +70,9 @@ namespace AutoAuction_H2.ViewModels
             }
         }
 
+        // -------------------------
+        // CREATE USER
+        // -------------------------
         [RelayCommand]
         private async Task CreateUserAsync()
         {
@@ -72,33 +84,69 @@ namespace AutoAuction_H2.ViewModels
 
             try
             {
-                // Kald dit UsersController endpoint via HttpClient eller en UserService
-                var createUserRequest = new
-                {
-                    UserName = Username,
-                    Password = Password, // AuthService dobbelthasher på server
-                    Balance = 0m,
-                    UserType = IsPrivatUser ? 0 : 1,
-                    CreditLimit = IsPrivatUser ? 0m : 20000m
-                };
+                // 🔑 Hash password én gang på klienten
+                var hash1 = HashHelper.Hash(Password);
 
-                var response = await _authService.RegisterUserAsync(createUserRequest);
-
-                if (response.success)
+                if (IsPrivatUser)
                 {
-                    ErrorMessage = "";
-                    IsCreatingUser = false;
-                    Password = ConfirmPassword = Username = CprNumber = CvrNumber = "";
+                    var (success, error) = await _userService.CreatePrivateUserAsync(
+                        Username,
+                        hash1,
+                        ZipCode,
+                        0m,
+                        CprNumber
+                    );
+
+                    if (success)
+                        ResetFields();
+                    else
+                        ErrorMessage = $"❌ Brugeroprettelse fejlede (privat): {error}";
                 }
                 else
                 {
-                    ErrorMessage = $"❌ Brugeroprettelse fejlede: {response.error}";
+                    var (success, error) = await _userService.CreateCorporateUserAsync(
+                        Username,
+                        hash1,
+                        ZipCode,
+                        0m,
+                        CvrNumber,
+                        20000m
+                    );
+
+                    if (success)
+                        ResetFields();
+                    else
+                        ErrorMessage = $"❌ Brugeroprettelse fejlede (firma): {error}";
                 }
             }
             catch (Exception ex)
             {
                 ErrorMessage = $"❌ Fejl under oprettelse: {ex.Message}";
             }
+        }
+
+        // -------------------------
+        // HELPER: Hash
+        // -------------------------
+        public static class HashHelper
+        {
+            public static string Hash(string input)
+            {
+                using var sha256 = SHA256.Create();
+                var bytes = Encoding.UTF8.GetBytes(input);
+                var hash = sha256.ComputeHash(bytes);
+                return Convert.ToBase64String(hash);
+            }
+        }
+
+        // -------------------------
+        // HELPER: Reset input fields
+        // -------------------------
+        private void ResetFields()
+        {
+            ErrorMessage = "";
+            IsCreatingUser = false;
+            Password = ConfirmPassword = Username = CprNumber = CvrNumber = "";
         }
 
         [RelayCommand]
