@@ -22,20 +22,11 @@
           DoubleTapped="DataGrid_OnDoubleTapped">
 
 			<DataGrid.Columns>
-				<!-- Auktions-info -->
-				<DataGridTextColumn Header="Auction Id" Binding="{Binding Id}" Width="80"/>
-				<DataGridTextColumn Header="Startpris" Binding="{Binding MinPrice}" Width="100"/>
-				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" Width="120"/>
-				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
-
-				<!-- Lastbil-info -->
-				<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
-				<DataGridTextColumn Header="Årgang" Binding="{Binding Vehicle.Year}" Width="80"/>
-				<DataGridTextColumn Header="Km" Binding="{Binding Vehicle.Mileage}" Width="120"/>
-				<DataGridTextColumn Header="Brændstof" Binding="{Binding Vehicle.FuelType}" Width="100"/>
-				<DataGridTextColumn Header="Motor Størrelse" Binding="{Binding Vehicle.MotorSize}" Width="120"/>
-				<DataGridTextColumn Header="Effektivitet (km/l)" Binding="{Binding Vehicle.FuelEfficiency}" Width="150"/>
-				<DataGridTextColumn Header="Kørekort" Binding="{Binding Vehicle.LicenseType}" Width="100"/>
+				<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
+				<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
+				<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
+				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
+				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
 			</DataGrid.Columns>
 		</DataGrid>
 	</DockPanel>
