@@ -32,11 +32,11 @@ namespace AutoAuction_H2
             services.AddSingleton(new HttpClient { BaseAddress = baseUri });
             services.AddScoped<UserService>();
             // ---------- Services ----------
-            services.AddSingleton<AuthService>();
-            services.AddSingleton<AuctionService>();
-            services.AddSingleton<UserService>();  // ✅ Tilføjet her
+            services.AddScoped<AuthService>();
+            services.AddScoped<AuctionService>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<VehicleFactory>();
+
 
             // ---------- ViewModels ----------
             services.AddTransient<LoginViewModel>();
