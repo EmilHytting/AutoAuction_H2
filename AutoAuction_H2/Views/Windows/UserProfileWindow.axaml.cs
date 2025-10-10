@@ -3,39 +3,36 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AutoAuction_H2.Views.Windows
+namespace AutoAuction_H2.Views.Windows;
+
+public partial class UserProfileWindow : Window
 {
-    public partial class UserProfileWindow : Window
+    private readonly UserProfileWindowViewModel _vm;
+
+    public UserProfileWindow()
     {
-        private readonly UserProfileViewModel _vm;
+        InitializeComponent();
 
-        public UserProfileWindow()
+        _vm = App.Services.GetRequiredService<UserProfileWindowViewModel>();
+        DataContext = _vm;
+    }
+
+    private void Close_Click(object? sender, RoutedEventArgs e) => Close();
+
+    private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
+    {
+        var dlg = App.Services.GetRequiredService<ChangePasswordWindow>();
+
+        if (dlg.DataContext is ChangePasswordViewModel vm)
         {
-            InitializeComponent();
-
-            // ✅ Hent ViewModel fra DI
-            _vm = App.Services.GetRequiredService<UserProfileViewModel>();
-            DataContext = _vm;
-        }
-
-        private void Close_Click(object? sender, RoutedEventArgs e) => Close();
-
-        private async void ChangePassword_Click(object? sender, RoutedEventArgs e)
-        {
-            // ✅ Resolve ChangePasswordWindow fra DI
-            var dlg = App.Services.GetRequiredService<ChangePasswordWindow>();
-
-            if (dlg.DataContext is ChangePasswordViewModel vm)
+            void Handler(object? s, System.EventArgs e2)
             {
-                void Handler(object? s, System.EventArgs e2)
-                {
-                    vm.PasswordChanged -= Handler;
-                    dlg.Close();
-                }
-                vm.PasswordChanged += Handler;
+                vm.PasswordChanged -= Handler;
+                dlg.Close();
             }
-
-            await dlg.ShowDialog(this);
+            vm.PasswordChanged += Handler;
         }
+
+        await dlg.ShowDialog(this);
     }
 }

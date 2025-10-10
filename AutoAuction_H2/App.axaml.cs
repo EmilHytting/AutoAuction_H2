@@ -9,7 +9,6 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 
 namespace AutoAuction_H2
@@ -25,25 +24,22 @@ namespace AutoAuction_H2
         {
             var services = new ServiceCollection();
 
-            // Hent base-URL fra AppState
+            // ---------- Services ----------
             var baseUri = new Uri(AppState.Instance.ApiBaseUrl);
-
-            // Registrer HttpClient med base address
             services.AddSingleton(new HttpClient { BaseAddress = baseUri });
             services.AddScoped<UserService>();
-            // ---------- Services ----------
             services.AddScoped<AuthService>();
             services.AddScoped<AuctionService>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<VehicleFactory>();
-
 
             // ---------- ViewModels ----------
             services.AddTransient<LoginViewModel>();
             services.AddTransient<HomeScreenViewModel>();
             services.AddTransient<AuctionOverviewViewModel>();
             services.AddTransient<CreateAuctionViewModel>();
-            services.AddSingleton<UserProfileViewModel>();
+            services.AddSingleton<UserProfileViewModel>();        // Small profile card
+            services.AddTransient<UserProfileWindowViewModel>();  // Full profile window
             services.AddTransient<PrivateCarsViewModel>();
             services.AddTransient<ProfessionalCarsViewModel>();
             services.AddTransient<TrucksViewModel>();
@@ -53,32 +49,30 @@ namespace AutoAuction_H2
             services.AddSingleton<MainViewModel>();
             services.AddTransient<AuctionDetailViewModel>();
             services.AddTransient<LeftPanelViewModel>();
+            services.AddTransient<ChangePasswordViewModel>();
 
             // ---------- Views ----------
-            // MainWindow bør være Singleton, da den er root
-            services.AddSingleton<MainWindow>();
+            services.AddSingleton<MainWindow>(); // Root window should be singleton
             services.AddTransient<LoginView>();
             services.AddTransient<MainView>();
             services.AddTransient<UserProfileView>();
-
-            // ❌ UserProfileWindow skal ikke være i DI (oprettes manuelt når den bruges)
-            // services.AddTransient<UserProfileWindow>();
-
+            services.AddTransient<UserProfileWindow>();  // ✅ Add this back, managed via DI
             services.AddTransient<ChangePasswordWindow>();
             services.AddTransient<CreateAuctionWindow>();
+
+            services.AddSingleton(AppState.Instance);  // register the existing singleton
 
             // ---------- Build DI ----------
             _serviceProvider = services.BuildServiceProvider();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                // Hent navigation service
                 var nav = Services.GetRequiredService<INavigationService>();
 
-                // Start med HomeScreenViewModel
+                // Start with HomeScreen
                 nav.NavigateTo<HomeScreenViewModel>();
 
-                // Sæt MainWindow med MainViewModel, som holder navigation
+                // MainWindow with DI-injected MainViewModel
                 desktop.MainWindow = Services.GetRequiredService<MainWindow>();
             }
 

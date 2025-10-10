@@ -43,5 +43,16 @@ namespace AutoAuction_H2.Views
             // Sørg for at navigation starter på Home
             _mainVm.LeftPanelViewModel.ShowHomeCommand.Execute(null);
         }
+
+        public void ShowLoginView()
+        {
+            _loginView.DataContext = _loginVm;
+            MainContent.Content = _loginView;
+        }
+
+        public static MainWindow? Current =>
+    (App.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)
+    ?.MainWindow as MainWindow;
+
     }
 }

@@ -1,85 +1,73 @@
 using AutoAuction_H2.Models.Entities;
 using AutoAuction_H2.Services;
+using AutoAuction_H2.Views;
+using AutoAuction_H2.Views.ContentPanels;
 using AutoAuction_H2.Views.Windows;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
+namespace AutoAuction_H2.ViewModels;
 
-namespace AutoAuction_H2.ViewModels
+public partial class UserProfileViewModel : ViewModelBase
 {
-    public partial class UserProfileViewModel : ViewModelBase
+    [ObservableProperty] private string userName;
+    [ObservableProperty] private decimal balance;
+
+    private readonly INavigationService _navigation;
+
+    public IRelayCommand LogoutCommand { get; }
+    public IAsyncRelayCommand OpenProfileCommand { get; }
+
+    public UserProfileViewModel(INavigationService navigation)
     {
-        [ObservableProperty] private string userName;
-        [ObservableProperty] private decimal balance;
-        [ObservableProperty] private int userType;
-        [ObservableProperty] private decimal creditLimit;
-        [ObservableProperty] private int yourAuctionsCount;
-        [ObservableProperty] private int auctionsWonCount;
+        _navigation = navigation;
 
-        public string UserTypeText => UserType == 0 ? "Privat" : "Professionel";
+        LogoutCommand = new RelayCommand(DoLogout);
+        OpenProfileCommand = new AsyncRelayCommand(DoOpenProfile);
 
-        // Commands
-        public IRelayCommand LogoutCommand { get; }
-        public IAsyncRelayCommand OpenProfileCommand { get; }
+        var app = AppState.Instance;
+        userName = app.UserName ?? "Ukendt";
+        balance = app.Balance;
 
-        private readonly INavigationService _navigation;
-
-        public UserProfileViewModel(INavigationService navigation)
+        app.PropertyChanged += (_, e) =>
         {
-            _navigation = navigation;
+            if (e.PropertyName == nameof(AppState.UserName))
+                UserName = app.UserName;
+            if (e.PropertyName == nameof(AppState.Balance))
+                Balance = app.Balance;
+        };
+    }
 
-            LogoutCommand = new RelayCommand(DoLogout);
-            OpenProfileCommand = new AsyncRelayCommand(DoOpenProfile);
+    private void DoLogout()
+    {
+        var app = AppState.Instance;
+        app.UserId = 0;
+        app.UserName = "";
+        app.Balance = 0;
+        app.UserType = 0;
 
-            var app = AppState.Instance;
+        // Tell MainWindow to swap back to login
+        MainWindow.Current?.ShowLoginView();
+    }
 
-            // Init values fra AppState
-            userName = app.UserName ?? "Ukendt";
-            balance = app.Balance;
-            userType = app.UserType;
-            creditLimit = app.CreditLimit;
 
-            // Lyt på AppState ændringer
-            app.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(AppState.UserName))
-                    UserName = app.UserName;
 
-                if (e.PropertyName == nameof(AppState.Balance))
-                    Balance = app.Balance;
+    private async Task DoOpenProfile()
+    {
+        var window = App.Services.GetRequiredService<UserProfileWindow>();
 
-                if (e.PropertyName == nameof(AppState.UserType))
-                {
-                    UserType = app.UserType;
-                    OnPropertyChanged(nameof(UserTypeText));
-                }
-
-                if (e.PropertyName == nameof(AppState.CreditLimit))
-                    CreditLimit = app.CreditLimit;
-            };
+        if (App.Current?.ApplicationLifetime
+            is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is Window owner)
+        {
+            await window.ShowDialog(owner);
         }
-
-        private void DoLogout()
+        else
         {
-            // Naviger tilbage til login
-            _navigation.NavigateTo<LoginViewModel>();
-        }
-
-        private async Task DoOpenProfile()
-        {
-            var window = new UserProfileWindow();
-
-            if (App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
-                && desktop.MainWindow is Window owner)
-            {
-                await window.ShowDialog(owner);
-            }
-            else
-            {
-                window.Show();
-            }
+            window.Show();
         }
     }
 }

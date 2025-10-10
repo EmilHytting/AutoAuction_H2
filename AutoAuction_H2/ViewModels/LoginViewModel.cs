@@ -58,6 +58,9 @@ namespace AutoAuction_H2.ViewModels
 
                     ErrorMessage = "";
                     LoggedIn?.Invoke();
+                    ResetFields();
+
+
                 }
                 else
                 {

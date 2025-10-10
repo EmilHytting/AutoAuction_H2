@@ -16,6 +16,8 @@ namespace AutoAuction_H2.Models.Entities
         private int _userId;
         private int _userType;
         private string _message;
+        private int _yourAuctionsCount;
+        private int _auctionsWonCount;
         private string _apiBaseUrl = "https://localhost:44334/";
         private int _creditLimit;
 
@@ -53,6 +55,20 @@ namespace AutoAuction_H2.Models.Entities
             get => _userType;
             set { _userType = value; OnChanged(); }
         }
+
+        public int YourAuctionsCount
+        {
+            get => _yourAuctionsCount;
+            set { _yourAuctionsCount = value; OnChanged(); }
+        }
+
+
+        public int AuctionsWonCount
+        {
+            get => _auctionsWonCount;
+            set { _auctionsWonCount = value; OnChanged(); }
+        }
+
 
         public string ApiBaseUrl
         {

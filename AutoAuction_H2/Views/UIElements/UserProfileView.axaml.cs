@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+using AutoAuction_H2.ViewModels;
+using Avalonia.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AutoAuction_H2.Views.UIElements
 {
@@ -7,6 +9,7 @@ namespace AutoAuction_H2.Views.UIElements
         public UserProfileView()
         {
             InitializeComponent();
+            DataContext = App.Services.GetRequiredService<UserProfileViewModel>();
         }
     }
 }

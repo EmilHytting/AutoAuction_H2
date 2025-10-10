@@ -1,12 +1,16 @@
 ﻿using AutoAuction_H2.Models.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add DbContext
 builder.Services.AddDbContext<AuctionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
 
 // Add controllers
 builder.Services.AddControllers()

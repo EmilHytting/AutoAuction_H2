@@ -35,7 +35,7 @@
 			<DependentUpon>TrucksView.axaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\UIElements\UserProfileView.axaml.cs">
-			<DependentUpon>UserProfileView.axaml</DependentUpon>
+		  <DependentUpon>UserProfileView.axaml</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
