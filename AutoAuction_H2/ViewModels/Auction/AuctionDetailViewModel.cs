@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Xunit.Sdk;
 
 namespace AutoAuction_H2.ViewModels
 {
@@ -47,6 +48,14 @@ namespace AutoAuction_H2.ViewModels
         {
             ErrorMessage = null;
 
+            // ❌ bud under minimumspris
+            if (amount < Item.MinPrice)
+            {
+                ErrorMessage = $"Buddet skal være mindst {Item.MinPrice:N0} kr.";
+                return;
+            }
+
+            // ❌ bud under eller lig med nuværende
             if (amount <= Item.CurrentBid)
             {
                 ErrorMessage = "Buddet skal være højere end det nuværende.";
@@ -74,6 +83,7 @@ namespace AutoAuction_H2.ViewModels
                 ErrorMessage = ex.Message;
             }
         }
+
 
         private void OnBack()
         {

@@ -1,8 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             xmlns:conv="clr-namespace:AutoAuction_H2.Converters"
              x:Class="AutoAuction_H2.Views.ContentPanels.MyBidsView"
              x:DataType="vm:MyBidsViewModel">
+
+	<UserControl.Resources>
+		<conv:BidStatusConverter x:Key="BidStatusConverter"/>
+	</UserControl.Resources>
 
 	<DockPanel Margin="10">
 		<TextBlock Text="🖐 Mine bud"
@@ -12,16 +17,27 @@
                    DockPanel.Dock="Top"/>
 
 		<DataGrid ItemsSource="{Binding Bids}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  GridLinesVisibility="All">
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          GridLinesVisibility="All"
+		 ContextRequested="DataGrid_OnContextRequested"
+          DoubleTapped="DataGrid_OnDoubleTapped">
 
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Auction Id" Binding="{Binding Id}" Width="80"/>
-				<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" Width="120"/>
+				<!-- Nuværende bud med farve -->
+				<DataGridTemplateColumn Header="Nuværende bud" Width="120">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding CurrentBid, StringFormat='{}{0:N0} kr'}"
+									   Foreground="{Binding HighestBidderId, Converter={StaticResource BidStatusConverter}}"
+									   FontWeight="Bold"
+									   HorizontalAlignment="Right"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+
 				<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
 				<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
-				<DataGridTextColumn Header="Årgang" Binding="{Binding Vehicle.Year}" Width="80"/>
 			</DataGrid.Columns>
 		</DataGrid>
 	</DockPanel>

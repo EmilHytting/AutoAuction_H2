@@ -1,44 +1,40 @@
+using AutoAuction_H2.Models.Entities;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
+using System;
 
-namespace AutoAuction_H2.Views.Auction;
-
-public partial class BidDialogWindow : Window
+namespace AutoAuction_H2.Views.Auction
 {
-    public BidDialogWindow()
+    public partial class BidDialogWindow : Window
     {
-        InitializeComponent();
-    }
+        private readonly AuctionEntity _auction;
 
-    public BidDialogWindow(decimal min)
-    {
-        InitializeComponent();
-        if (this.FindControl<NumericUpDown>("BidInput") is { } updown)
+        public decimal EnteredBid => BidInput.Value ?? 0;
+
+        public BidDialogWindow(AuctionEntity auction)
         {
-            updown.Minimum = min;
-            updown.Value = min;
+            InitializeComponent();
+            _auction = auction;
+
+            // Minimum skal være enten MinPrice eller CurrentBid + 1
+            var minimum = auction.CurrentBid > 0
+                ? Math.Max(auction.MinPrice, auction.CurrentBid + 1)
+                : auction.MinPrice;
+
+            BidInput.Minimum = minimum;
+            BidInput.Value = minimum; // startværdi
         }
-    }
 
-    private void InitializeComponent()
-    {
-        AvaloniaXamlLoader.Load(this);
-    }
+        private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+                BeginMoveDrag(e);
+        }
 
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-            BeginMoveDrag(e);
-    }
+        private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+            => Close(null);
 
-    private void Cancel_Click(object? sender, RoutedEventArgs e) => Close(null);
-    private void Bid_Click(object? sender, RoutedEventArgs e)
-    {
-        if (this.FindControl<NumericUpDown>("BidInput") is { } updown && updown.Value is decimal d)
-            Close(d);
-        else
-            Close(null);
+        private void Bid_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+            => Close(EnteredBid);
     }
 }

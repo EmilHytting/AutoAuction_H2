@@ -44,6 +44,21 @@ namespace AutoAuction_H2.API.Controllers
             return auction;
         }
 
+
+        [HttpGet("user/{userId}/bids")]
+        public async Task<ActionResult<IEnumerable<AuctionEntity>>> GetMyBids(int userId)
+        {
+            var auctions = await _context.Auctions
+                .Include(a => a.Vehicle)
+                .Include(a => a.Seller)
+                .Include(a => a.HighestBidder)
+                .Include(a => a.Bids)              // ✅ ensures bids are loaded
+                .Where(a => a.Bids.Any(b => b.UserId == userId))
+                .ToListAsync();
+
+            return auctions;
+        }
+
         // POST: api/auctions
         [HttpPost]
         public async Task<ActionResult<AuctionEntity>> CreateAuction(AuctionEntity auction)

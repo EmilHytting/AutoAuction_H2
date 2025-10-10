@@ -22,7 +22,8 @@ public partial class AuctionDetailView : UserControl
         if (DataContext is not AuctionDetailViewModel vm)
             return;
 
-        var dlg = new BidDialogWindow(vm.Item.CurrentBid + 1000);
+        var dlg = new BidDialogWindow(vm.Item);
+
         if (VisualRoot is Window owner)
         {
             var amount = await dlg.ShowDialog<decimal?>(owner);
@@ -34,4 +35,5 @@ public partial class AuctionDetailView : UserControl
             dlg.Show();
         }
     }
+
 }

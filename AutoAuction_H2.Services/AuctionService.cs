@@ -30,6 +30,14 @@ public class AuctionService
         return await response.Content.ReadFromJsonAsync<AuctionEntity>();
     }
 
+    public async Task<IEnumerable<AuctionEntity>> GetActiveBidsAsync(int userId)
+    {
+        return await _client.GetFromJsonAsync<IEnumerable<AuctionEntity>>(
+            $"api/auctions/user/{userId}/bids"
+        ) ?? [];
+    }
+
+
     public async Task<(bool success, string? error)> CreateAuctionAsync(AuctionEntity auction)
     {
         var response = await _client.PostAsJsonAsync("api/auctions", auction);
@@ -73,14 +81,7 @@ public class AuctionService
         return all.Where(a => a.SellerId == userId);
     }
 
-    public async Task<IEnumerable<AuctionEntity>> GetActiveBidsAsync(int userId)
-    {
-        var all = await GetAuctionsAsync();
-        return all.Where(a =>
-            a.Bids.Any(b => b.UserId == userId) &&
-            !a.IsSold &&
-            a.EndTime > DateTime.UtcNow);
-    }
+
 
     public async Task<IEnumerable<AuctionEntity>> GetOverbidAuctionsAsync(int userId)
     {
