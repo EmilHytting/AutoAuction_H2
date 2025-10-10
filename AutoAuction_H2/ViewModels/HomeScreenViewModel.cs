@@ -2,6 +2,7 @@
 using AutoAuction_H2.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit.Sdk;
 
@@ -47,14 +48,17 @@ namespace AutoAuction_H2.ViewModels
 
                 // Hent aktive bud
                 var bids = await _auctionService.GetActiveBidsAsync(userId);
-                ActiveBids = new ObservableCollection<AuctionEntity>(bids);
+
+                // Sortér så overbudte (røde) kommer først
+                var sortedBids = bids
+                    .OrderBy(a => a.HighestBidderId == userId ? 1 : 0) // overbudt = 0, førende = 1
+                    .ToList();
+
+                ActiveBids = new ObservableCollection<AuctionEntity>(sortedBids);
 
                 // Hent auktioner hvor jeg er overbudt
                 var overbid = await _auctionService.GetOverbidAuctionsAsync(userId);
                 OverbidAuctions = new ObservableCollection<AuctionEntity>(overbid);
-
-                // Hvis du vil hente alle auktioner bare til debug/test
-                // var all = await _auctionService.GetAuctionsAsync();
             }
             catch (System.Exception ex)
             {
@@ -65,5 +69,6 @@ namespace AutoAuction_H2.ViewModels
                 IsLoading = false;
             }
         }
+
     }
 }

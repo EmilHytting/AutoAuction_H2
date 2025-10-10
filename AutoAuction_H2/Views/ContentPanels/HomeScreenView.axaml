@@ -1,8 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AutoAuction_H2.ViewModels"
+             xmlns:conv="clr-namespace:AutoAuction_H2.Converters"
              x:Class="AutoAuction_H2.Views.ContentPanels.HomeScreenView"
              x:DataType="vm:HomeScreenViewModel">
+
+	<UserControl.Resources>
+		<conv:BidStatusConverter x:Key="BidStatusConverter"/>
+		<conv:BidStatusTextConverter x:Key="BidStatusTextConverter"/>
+	</UserControl.Resources>
 
 	<Grid Margin="10" RowDefinitions="Auto,*" RowSpacing="20">
 
@@ -15,9 +21,9 @@
 			<StackPanel>
 				<TextBlock Text="Dine auktioner" FontSize="12" FontWeight="Bold"/>
 				<DataGrid ItemsSource="{Binding MyAuctions}"
-                            AutoGenerateColumns="False"
-                            IsReadOnly="True"
-                            Height="150">
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Height="150">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
 						<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
@@ -31,33 +37,27 @@
 			<StackPanel>
 				<TextBlock Text="Auktioner du har bud på" FontSize="12" FontWeight="Bold"/>
 				<DataGrid ItemsSource="{Binding ActiveBids}"
-                            AutoGenerateColumns="False"
-                            IsReadOnly="True"
-                            Height="125">
+          AutoGenerateColumns="False"
+          IsReadOnly="True"
+          Height="200">
 					<DataGrid.Columns>
-						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
-						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
-						<DataGridTextColumn Header="Mindstepris" Binding="{Binding MinPrice}" />
-						<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
-						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
-					</DataGrid.Columns>
-				</DataGrid>
-			</StackPanel>
+						<!-- Nuværende bud med farve -->
+						<DataGridTemplateColumn Header="Nuværende bud" Width="120">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding CurrentBid, StringFormat='{}{0:N0} kr'}"
+											   Foreground="{Binding HighestBidderId, Converter={StaticResource BidStatusConverter}}"
+											   FontWeight="Bold"
+											   HorizontalAlignment="Right"/>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
 
-			<!-- Overbudte Auktioner -->
-			<StackPanel>
-				<TextBlock Text="Auktioner hvor du er overbudt" FontSize="12" FontWeight="Bold"/>
-				<DataGrid ItemsSource="{Binding OverbidAuctions}"
-                            AutoGenerateColumns="False"
-                            IsReadOnly="True"
-                            Height="125">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Køretøj" Binding="{Binding Vehicle.Name}" />
-						<DataGridTextColumn Header="Sælger" Binding="{Binding Seller.UserName}" />
-						<DataGridTextColumn Header="Nuværende bud" Binding="{Binding CurrentBid}" />
-						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" />
+						<DataGridTextColumn Header="Slutter" Binding="{Binding EndTime}" Width="150"/>
+						<DataGridTextColumn Header="Navn" Binding="{Binding Vehicle.Name}" Width="200"/>
 					</DataGrid.Columns>
 				</DataGrid>
+
 			</StackPanel>
 
 		</StackPanel>

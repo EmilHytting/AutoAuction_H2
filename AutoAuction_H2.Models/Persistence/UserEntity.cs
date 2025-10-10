@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Text;
-
+using System.Security.Cryptography;
 namespace AutoAuction_H2.Models.Persistence
 {
     public class UserEntity
@@ -10,13 +9,14 @@ namespace AutoAuction_H2.Models.Persistence
         public string UserName { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public decimal Balance { get; set; }
+        public decimal ReservedAmount { get; set; }   // 👈 nyt felt
         public int ZipCode { get; set; }
 
         // 0 = PrivateUser, 1 = CorporateUser
         public int UserType { get; set; }
-        public decimal CreditLimit { get; set; } // Only used if Corporate
+        public decimal CreditLimit { get; set; }
 
-        // ✅ Bruges når vi gemmer (fra app → API → DB)
+        // Hashing / login
         public static string DoubleHash(string clientHash)
         {
             using var sha256 = SHA256.Create();
@@ -25,11 +25,13 @@ namespace AutoAuction_H2.Models.Persistence
             return Convert.ToBase64String(hash);
         }
 
-        // ✅ Bruges når vi logger ind (app sender hash → API sammenligner mod DB)
         public bool VerifyPassword(string clientHash)
         {
             var doubleHashed = DoubleHash(clientHash);
             return PasswordHash == doubleHashed;
         }
+
+        // ✅ Computed property – ikke gemt i DB
+        public decimal AvailableBalance => Balance - ReservedAmount;
     }
 }

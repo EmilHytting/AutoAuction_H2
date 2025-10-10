@@ -13,6 +13,7 @@ namespace AutoAuction_H2.Models.Entities
 
         private string _userName = string.Empty;
         private decimal _balance;
+        private decimal _reservedAmount;   // 👈 nyt felt
         private int _userId;
         private int _userType;
         private string _message;
@@ -32,6 +33,7 @@ namespace AutoAuction_H2.Models.Entities
             get => _message;
             set { _message = value; OnChanged(); }
         }
+
         public int UserId
         {
             get => _userId;
@@ -47,8 +49,17 @@ namespace AutoAuction_H2.Models.Entities
         public decimal Balance
         {
             get => _balance;
-            set { _balance = value; OnChanged(); }
+            set { _balance = value; OnChanged(); OnChanged(nameof(AvailableBalance)); }
         }
+
+        public decimal ReservedAmount
+        {
+            get => _reservedAmount;
+            set { _reservedAmount = value; OnChanged(); OnChanged(nameof(AvailableBalance)); }
+        }
+
+        // 👇 Computed property
+        public decimal AvailableBalance => Balance - ReservedAmount;
 
         public int UserType
         {
@@ -62,13 +73,11 @@ namespace AutoAuction_H2.Models.Entities
             set { _yourAuctionsCount = value; OnChanged(); }
         }
 
-
         public int AuctionsWonCount
         {
             get => _auctionsWonCount;
             set { _auctionsWonCount = value; OnChanged(); }
         }
-
 
         public string ApiBaseUrl
         {

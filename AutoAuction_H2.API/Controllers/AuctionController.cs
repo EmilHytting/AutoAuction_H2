@@ -75,8 +75,9 @@ namespace AutoAuction_H2.API.Controllers
         }
 
         // POST: api/auctions/{id}/bids
+        // POST: api/auctions/{id}/bids
         [HttpPost("{id}/bids")]
-        public async Task<ActionResult<BidEntity>> PlaceBid(int id, [FromBody] BidEntity bid)
+        public async Task<ActionResult<UserEntity>> PlaceBid(int id, [FromBody] BidEntity bid)
         {
             var auction = await _context.Auctions
                 .Include(a => a.Bids)
@@ -89,35 +90,86 @@ namespace AutoAuction_H2.API.Controllers
             if (user == null)
                 return BadRequest("User not found.");
 
-            if (bid.Amount <= auction.CurrentBid)
-                return BadRequest("Bid must be higher than current bid.");
+            if (bid.Amount <= auction.CurrentBid || bid.Amount < auction.MinPrice)
+                return BadRequest("Bid must be higher than current and at least min price.");
+
+            // Frigiv tidligere højeste bud
+            if (auction.HighestBidderId.HasValue && auction.HighestBidderId != bid.UserId)
+            {
+                var oldBidder = await _context.Users.FindAsync(auction.HighestBidderId);
+                if (oldBidder != null)
+                    oldBidder.ReservedAmount -= auction.CurrentBid;
+            }
+
+            if (user.AvailableBalance < bid.Amount)
+                return BadRequest("Not enough balance.");
+
+            user.ReservedAmount += bid.Amount;
 
             auction.CurrentBid = bid.Amount;
             auction.HighestBidderId = bid.UserId;
-
+            bid.AuctionId = auction.Id;
             _context.Bids.Add(bid);
             await _context.SaveChangesAsync();
 
-            return Ok(bid);
+            // 👇 Returnér kun den opdaterede bruger (uden passwordhash)
+            return Ok(new
+            {
+                user.Id,
+                user.UserName,
+                user.Balance,
+                user.ReservedAmount
+            });
         }
+
+
+
+
 
         // PUT: api/auctions/{id}/close
         [HttpPut("{id}/close")]
         public async Task<IActionResult> CloseAuction(int id)
         {
-            var auction = await _context.Auctions.FindAsync(id);
-            if (auction == null)
-                return NotFound();
+            var auction = await _context.Auctions
+                .Include(a => a.Seller)
+                .Include(a => a.HighestBidder)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            // Mark as sold if current bid >= min price
+            if (auction == null)
+                return NotFound("Auction not found.");
+
+            if (auction.IsSold)
+                return BadRequest("Auction is already closed.");
+
             if (auction.CurrentBid >= auction.MinPrice && auction.HighestBidderId != null)
             {
+                var winner = auction.HighestBidder;
+                var seller = auction.Seller;
+
+                if (winner == null || seller == null)
+                    return BadRequest("Auction must have valid seller and highest bidder.");
+
+                // Træk betaling fra vinderens reservering
+                if (winner.ReservedAmount >= auction.CurrentBid)
+                    winner.ReservedAmount -= auction.CurrentBid;
+
+                winner.Balance -= auction.CurrentBid;
+
+                // Udbetal til sælger
+                seller.Balance += auction.CurrentBid;
+
+                auction.IsSold = true;
+            }
+            else
+            {
+                // Ingen vinder → bare luk auktionen uden betaling
                 auction.IsSold = true;
             }
 
             await _context.SaveChangesAsync();
             return Ok(auction);
         }
+
 
         // DELETE: api/auctions/{id}
         [HttpDelete("{id}")]

@@ -49,14 +49,26 @@ public class AuctionService
 
     public async Task<(bool success, string? error)> PlaceBidAsync(int auctionId, int userId, decimal amount)
     {
-        var request = new { AuctionId = auctionId, UserId = userId, Amount = amount };
-        var response = await _client.PostAsJsonAsync("api/bids", request);
+        var bid = new { UserId = userId, Amount = amount };
+
+        // ✅ must match AuctionsController: [HttpPost("{id}/bids")]
+        var response = await _client.PostAsJsonAsync($"api/auctions/{auctionId}/bids", bid);
 
         if (response.IsSuccessStatusCode)
+        {
+            var updatedUser = await response.Content.ReadFromJsonAsync<UserEntity>();
+            if (updatedUser != null)
+            {
+                AppState.Instance.Balance = updatedUser.Balance;
+                AppState.Instance.ReservedAmount = updatedUser.ReservedAmount;
+            }
             return (true, null);
+        }
+
 
         return (false, await response.Content.ReadAsStringAsync());
     }
+
 
     public async Task<(bool success, string? error)> CloseAuctionAsync(int auctionId)
     {

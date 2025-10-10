@@ -1,4 +1,5 @@
-﻿using AutoAuction_H2.Models.Persistence;
+﻿using AutoAuction_H2.Models.Entities;
+using AutoAuction_H2.Models.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -15,7 +16,7 @@ public class AuctionEntity
 
     public int? HighestBidderId { get; set; }
     public UserEntity? HighestBidder { get; set; }
-
+    public bool IsOverbid => HighestBidderId != AppState.Instance.UserId;
     public decimal MinPrice { get; set; }
     public decimal CurrentBid { get; set; }
     public bool IsSold { get; set; }

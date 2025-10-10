@@ -1,4 +1,5 @@
-﻿using AutoAuction_H2.Models.Persistence;
+﻿using AutoAuction_H2.API.Services;
+using AutoAuction_H2.Models.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
@@ -20,6 +21,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
+// Add background service for closing auctions
+builder.Services.AddHostedService<AuctionCloserService>();
 // Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

@@ -70,6 +70,7 @@ namespace AutoAuction_H2.Models.Persistence
             modelBuilder.Entity<AuctionEntity>().Property(a => a.MinPrice).HasPrecision(18, 2);
             modelBuilder.Entity<AuctionEntity>().Property(a => a.CurrentBid).HasPrecision(18, 2);
             modelBuilder.Entity<BidEntity>().Property(b => b.Amount).HasPrecision(18, 2);
+            modelBuilder.Entity<UserEntity>().Property(u => u.ReservedAmount).HasPrecision(18, 2); // 👈 nyt
         }
     }
 }

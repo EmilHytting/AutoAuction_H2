@@ -24,9 +24,14 @@ namespace AutoAuction_H2.ViewModels
             var auctions = await _auctionService.GetActiveBidsAsync(userId);
 
             Bids.Clear();
-            foreach (var a in auctions)
+            foreach (var a in auctions
+                .OrderByDescending(x => x.HighestBidderId != userId) // true (overbudt) først
+                .ThenBy(x => x.EndTime))
+            {
                 Bids.Add(a);
+            }
         }
+
 
         public void OpenAuctionDetail(AuctionEntity auction)
         {
